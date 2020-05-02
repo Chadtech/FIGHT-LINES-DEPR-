@@ -1,0 +1,6 @@
+[development]
+address = "localhost"
+port = 2943
+keep_alive = 5
+log = "normal"
+limits = { forms = 32768 }
