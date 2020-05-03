@@ -2,3 +2,4 @@ ui/target
 server/target
 .idea
 server-actix/target
+moves/target
