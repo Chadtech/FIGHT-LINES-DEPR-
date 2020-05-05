@@ -2,3 +2,5 @@ ui/target
 server/target
 .idea
 server-actix/target
+target
+dev-css/target
