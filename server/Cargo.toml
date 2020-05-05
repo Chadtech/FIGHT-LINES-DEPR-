@@ -10,3 +10,4 @@ edition = "2018"
 actix-web = "2.0"
 actix-rt = "1.0"
 fightlines_moves = { path = "../moves" }
+rand = "0.3"
