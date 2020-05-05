@@ -1,3 +1,6 @@
 pub enum Move {
-    East
+    North,
+    South,
+    East,
+    West,
 }
