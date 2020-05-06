@@ -1,4 +1,6 @@
-use yew::prelude::*;
+use yew::prelude::{App, Component, ComponentLink, Html};
+
+use ui::view::element;
 
 struct Model {
     link: ComponentLink<Self>,
@@ -9,6 +11,18 @@ enum Msg {
     AddOne,
 }
 
+////////////////////////////////////////////////////////////////
+// UPDATE //
+////////////////////////////////////////////////////////////////
+
+fn update(msg: Msg, model: &mut Model) {
+    match msg {
+        Msg::AddOne => {
+            model.value += 1;
+        }
+    }
+}
+
 impl Component for Model {
     type Message = Msg;
     type Properties = ();
@@ -16,27 +30,22 @@ impl Component for Model {
         Self { link, value: 0 }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::AddOne => self.value += 1,
-        }
+    fn update(&mut self, msg: Self::Message) -> bool {
+        update(msg, self);
         true
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        // Should only return "true" if new properties are different to
-        // previously received properties.
-        // This component has no properties so we will always return "false".
+    fn change(&mut self, _props: Self::Properties) -> bool {
         false
     }
 
     fn view(&self) -> Html {
-        html! {
-            <div>
-                <button onclick=self.link.callback(|_| Msg::AddOne)>{ "+1" }</button>
-                <p>{ self.value }</p>
-            </div>
-        }
+        return element::node(vec![
+            element::text("TRIPLE"),
+            element::text(" "),
+            element::text("KILL"),
+        ])
+        .to_html(|msg: Msg| msg);
     }
 }
 
