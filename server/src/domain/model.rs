@@ -1,6 +1,7 @@
 use super::game::Game;
 // use rand::{Rng, SeedableRng, StdRng};
 use std::collections::HashMap;
+use serde::Deserialize;
 
 ////////////////////////////////////////////////////////////////
 // Types //
@@ -33,4 +34,14 @@ impl Model {
     pub fn games_count(&self) -> usize {
         self.games.len()
     }
+    pub fn random_seed(&self) -> u64 {
+        self.randomness_seed
+    }
+}
+
+
+#[derive(Deserialize)]
+pub struct FormData {
+    pub game_name: String,
+    pub num_players: i64,
 }
