@@ -3,8 +3,8 @@ use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 
 use server::domain::model;
-use server::domain::model::Model;
 use server::domain::model::FormData;
+use server::domain::model::Model;
 use std::io;
 
 /// Responder Objects
@@ -25,7 +25,7 @@ async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-/// 
+///
 async fn post_game(form: web::Form<FormData>) -> impl Responder {
     HttpResponse::Ok().body(format!(
         "Game Name: {}, Num_Players: {}",
@@ -40,7 +40,7 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .data(model::init(205693129))
+            .data(model::init(205_693_129))
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
             .route("/", web::get().to(index))
