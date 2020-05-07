@@ -47,6 +47,15 @@ impl Model {
         self.randomness_seed = randomness_seed;
     }
 
+    /// If we ever need a random value, we need a
+    /// random number generator. To get the random
+    /// number generator, we should always use get_rng
+    /// because that will automatically update the
+    /// randomness_seed inside the model. If we dont
+    /// update it we will re-use the same seed, which
+    /// would lead to weird things like every random
+    /// event coming out the same way (every attack
+    /// always doing the same damage, for example)
     fn get_rng(&mut self) -> StdRng {
         let seed: &[usize] = &[self.randomness_seed];
 
