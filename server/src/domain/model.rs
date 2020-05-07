@@ -1,9 +1,7 @@
-use super::game;
 use super::game::Game;
 use rand::{Rng, SeedableRng, StdRng};
-use std::borrow::BorrowMut;
+use serde::Deserialize;
 use std::collections::HashMap;
-use std::iter;
 
 ////////////////////////////////////////////////////////////////
 // Types //
@@ -34,7 +32,9 @@ impl Model {
     pub fn games_count(&self) -> usize {
         self.games.len()
     }
-
+    pub fn random_seed(&self) -> usize {
+        self.randomness_seed
+    }
     pub fn add_game(&mut self, new_game: Game) {
         let mut rng = self.get_rng();
 
@@ -58,6 +58,12 @@ impl Model {
 
         rng
     }
+}
+
+#[derive(Deserialize)]
+pub struct FormData {
+    pub game_name: String,
+    pub num_players: i64,
 }
 
 ////////////////////////////////////////////////////////////////
