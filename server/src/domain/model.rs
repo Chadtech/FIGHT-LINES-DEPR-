@@ -1,6 +1,9 @@
+use super::game;
 use super::game::Game;
-// use rand::{Rng, SeedableRng, StdRng};
+use rand::{Rng, SeedableRng, StdRng};
+use std::borrow::BorrowMut;
 use std::collections::HashMap;
+use std::iter;
 
 ////////////////////////////////////////////////////////////////
 // Types //
@@ -8,17 +11,15 @@ use std::collections::HashMap;
 
 pub struct Model {
     /// String is an id
-    games: HashMap<String, Game>,
-    randomness_seed: u64,
+    games: HashMap<u64, Game>,
+    randomness_seed: usize,
 }
 
 ////////////////////////////////////////////////////////////////
 // Init //
 ////////////////////////////////////////////////////////////////
 
-pub fn init(randomness_seed: u64) -> Model {
-    // let mut rng: StdRng = SeedableRng::from_seed(randomness_seed);
-
+pub fn init(randomness_seed: usize) -> Model {
     return Model {
         games: HashMap::new(),
         randomness_seed,
@@ -32,5 +33,61 @@ pub fn init(randomness_seed: u64) -> Model {
 impl Model {
     pub fn games_count(&self) -> usize {
         self.games.len()
+    }
+
+    pub fn add_game(&mut self, new_game: Game) {
+        let mut rng = self.get_rng();
+
+        let id: u64 = rng.gen();
+
+        self.games.insert(id, new_game);
+    }
+
+    fn set_seed(&mut self, randomness_seed: usize) {
+        self.randomness_seed = randomness_seed;
+    }
+
+    fn get_rng(&mut self) -> StdRng {
+        let seed: &[usize] = &[self.randomness_seed];
+
+        let mut rng: StdRng = SeedableRng::from_seed(seed);
+
+        let new_randomness_seed: usize = rng.gen();
+
+        self.set_seed(new_randomness_seed);
+
+        rng
+    }
+}
+
+////////////////////////////////////////////////////////////////
+// Tests //
+////////////////////////////////////////////////////////////////
+
+#[cfg(test)]
+mod model_tests {
+    use crate::domain::model::Model;
+    use crate::domain::{game, model};
+
+    fn init_test_model() -> Model {
+        model::init(0)
+    }
+    #[test]
+    fn add_game_increases_game_count() {
+        let mut test_model = init_test_model();
+
+        test_model.add_game(game::init("test game"));
+
+        assert_eq!(test_model.games_count(), 1);
+    }
+
+    #[test]
+    fn using_the_seed_changes_it() {
+        let mut test_model_0 = init_test_model();
+        let mut test_model_1 = init_test_model();
+
+        let _rng = test_model_0.get_rng();
+
+        assert_ne!(test_model_0.randomness_seed, test_model_1.randomness_seed)
     }
 }
