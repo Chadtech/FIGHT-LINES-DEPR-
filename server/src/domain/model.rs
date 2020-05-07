@@ -18,10 +18,10 @@ pub struct Model {
 ////////////////////////////////////////////////////////////////
 
 pub fn init(randomness_seed: usize) -> Model {
-    return Model {
+    Model {
         games: HashMap::new(),
         randomness_seed,
-    };
+    }
 }
 
 ////////////////////////////////////////////////////////////////

@@ -18,9 +18,9 @@ pub struct Game {
 /// all the things needed to make
 /// a new game, but nothing else
 pub fn init(name: &str) -> Game {
-    return Game {
+    Game {
         name: name.to_string(),
         players: Vec::new(),
         round: 0,
-    };
+    }
 }
