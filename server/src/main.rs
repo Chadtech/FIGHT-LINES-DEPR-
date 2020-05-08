@@ -28,8 +28,8 @@ async fn game_count(model: web::Data<Model>) -> impl Responder {
 /// POST /game/create This
 /// function will be called from a post request
 async fn post_game(form: web::Form<FormData>, model: web::Data<Mutex<Model>>) -> impl Responder {
-    let mut g_model = model.lock().unwrap();
-    g_model.add_game(game::init(&form.game_name));
+    let mut data = model.lock().unwrap();
+    data.add_game(game::init(&form.game_name));
     HttpResponse::Ok().body(format!(
         "Game Name: {}, Num_Players: {}",
         form.game_name, form.num_players
@@ -42,11 +42,11 @@ async fn main() -> io::Result<()> {
 
     env_logger::from_env(Env::default().default_filter_or("info")).init();
 
-    let g_model = web::Data::new(Mutex::new(model::init(205_693_129)));
+    let global_state = web::Data::new(Mutex::new(model::init(205_693_129)));
 
     HttpServer::new(move || {
         App::new()
-            .app_data(g_model.clone())
+            .app_data(global_state.clone())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
             .route("/", web::get().to(index))
