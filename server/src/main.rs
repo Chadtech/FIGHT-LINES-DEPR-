@@ -2,10 +2,12 @@ use actix_files::Files;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 
+use server::domain::game;
 use server::domain::model;
 use server::domain::model::FormData;
 use server::domain::model::Model;
 use std::io;
+use std::sync::Mutex;
 
 /// Responder Objects
 /// GET /
@@ -25,8 +27,9 @@ async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-///
-async fn post_game(form: web::Form<FormData>) -> impl Responder {
+async fn post_game(form: web::Form<FormData>, model: web::Data<Mutex<Model>>) -> impl Responder {
+    let mut data = model.lock().unwrap();
+    data.add_game(game::init(&form.game_name));
     HttpResponse::Ok().body(format!(
         "Game Name: {}, Num_Players: {}",
         form.game_name, form.num_players
@@ -36,11 +39,14 @@ async fn post_game(form: web::Form<FormData>) -> impl Responder {
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
     use middleware::Logger;
+
     env_logger::from_env(Env::default().default_filter_or("info")).init();
 
-    HttpServer::new(|| {
+    let global_state = web::Data::new(Mutex::new(model::init(205_693_129)));
+
+    HttpServer::new(move || {
         App::new()
-            .data(model::init(205_693_129))
+            .app_data(global_state.clone())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
             .route("/", web::get().to(index))
