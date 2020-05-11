@@ -16,8 +16,10 @@ pub enum Element<MSG> {
     },
 }
 
+#[derive(Clone, Copy)]
 pub enum Attribute<MSG> {
     OnClick(MSG),
+    Center,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -46,6 +48,16 @@ pub fn node<MSG>(children: Vec<Element<MSG>>) -> Element<MSG> {
     tag(NODE_TAG_NAME, Vec::new(), children)
 }
 
+pub fn center<MSG>() -> Attribute<MSG> {
+    use crate::view::element::Attribute::Center;
+    Center
+}
+
+pub fn on_click<MSG>(msg: MSG) -> Attribute<MSG> {
+    use crate::view::element::Attribute::OnClick;
+    OnClick(msg)
+}
+
 impl<T> Element<T> {
     pub fn to_html<U>(&self, to_msg: fn(T) -> U) -> Html {
         match self {
@@ -54,10 +66,19 @@ impl<T> Element<T> {
             }
             Element::Node {
                 tag,
-                attrs: _,
+                attrs,
                 children,
             } => {
                 let mut tag: VTag = VTag::new(tag.to_string());
+
+                for attr in attrs {
+                    match attr {
+                        Attribute::OnClick(_msg) => {
+                            // TODO Implement On Click
+                        }
+                        Attribute::Center => tag.classes.push("center"),
+                    }
+                }
 
                 for child in children {
                     tag.children.push(child.to_html(to_msg));
@@ -65,6 +86,32 @@ impl<T> Element<T> {
 
                 virtual_dom::VNode::VTag(Box::new(tag))
             }
+        }
+    }
+    pub fn map<U>(self, mapper: fn(T) -> U) -> Element<U> {
+        match self {
+            Element::Text(text_content) => Element::Text(text_content.to_string()),
+            Element::Node {
+                tag,
+                attrs,
+                children,
+            } => Element::Node {
+                tag: tag.to_string(),
+                attrs: attrs.into_iter().map(|attr| attr.map(mapper)).collect(),
+                children: children
+                    .into_iter()
+                    .map(|child| child.map(mapper))
+                    .collect(),
+            },
+        }
+    }
+}
+
+impl<T> Attribute<T> {
+    pub fn map<U>(self, mapper: fn(T) -> U) -> Attribute<U> {
+        match self {
+            Attribute::OnClick(msg) => Attribute::OnClick(mapper(msg)),
+            Attribute::Center => Attribute::Center,
         }
     }
 }
