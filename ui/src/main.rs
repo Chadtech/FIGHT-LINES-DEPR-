@@ -1,33 +1,47 @@
 use yew::prelude::{App, Component, ComponentLink, Html};
 
-use ui::view::element;
+use ui::page::title;
+use yew::virtual_dom;
+use yew::virtual_dom::vlist::VList;
 
-struct Model {
-    link: ComponentLink<Self>,
-    value: i64,
+////////////////////////////////////////////////////////////////
+// Types //
+////////////////////////////////////////////////////////////////
+
+struct Program {
+    // I think this might be necessary for connecting Msg
+    // to the update cycle. But I dont know yet, and
+    // clippy complains that it is unused
+    // link: ComponentLink<Self>,
+    model: Model,
+}
+
+enum Model {
+    Title(title::Model),
 }
 
 enum Msg {
-    AddOne,
+    TitleMsg(title::Msg),
 }
 
 ////////////////////////////////////////////////////////////////
-// UPDATE //
+// Update //
 ////////////////////////////////////////////////////////////////
 
-fn update(msg: Msg, model: &mut Model) {
+fn update(msg: Msg, _app: &mut Program) {
     match msg {
-        Msg::AddOne => {
-            model.value += 1;
-        }
+        Msg::TitleMsg(_sub_msg) => {}
     }
 }
 
-impl Component for Model {
+impl Component for Program {
     type Message = Msg;
     type Properties = ();
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link, value: 0 }
+    fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        Self {
+            // link,
+            model: Model::Title(title::init()),
+        }
     }
 
     fn update(&mut self, msg: Self::Message) -> bool {
@@ -40,16 +54,18 @@ impl Component for Model {
     }
 
     fn view(&self) -> Html {
-        return element::node(vec![
-            element::text("TRIPLE"),
-            element::text(" "),
-            element::text("KILL"),
-        ])
-        .to_html(|msg: Msg| msg);
+        let page = match self.model {
+            Model::Title(sub_model) => title::view(sub_model)
+                .into_iter()
+                .map(|child| child.to_html(Msg::TitleMsg))
+                .collect(),
+        };
+
+        virtual_dom::VNode::VList(VList::new_with_children(page, None))
     }
 }
 
 fn main() {
     yew::initialize();
-    App::<Model>::new().mount_to_body();
+    App::<Program>::new().mount_to_body();
 }
