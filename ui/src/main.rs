@@ -57,7 +57,7 @@ impl Component for Program {
         let page = match self.model {
             Model::Title(sub_model) => title::view(sub_model)
                 .into_iter()
-                .map(|child| child.map(Msg::TitleMsg).to_html(|msg: Msg| msg))
+                .map(|child| child.to_html(Msg::TitleMsg))
                 .collect(),
         };
 
