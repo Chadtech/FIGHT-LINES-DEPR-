@@ -62,7 +62,6 @@ impl Component for Program {
         };
 
         virtual_dom::VNode::VList(VList::new_with_children(page, None))
-        // return element::node(page).to_html(|msg: Msg| msg);
     }
 }
 
