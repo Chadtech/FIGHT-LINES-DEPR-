@@ -1,12 +1,13 @@
-use crate::view::element;
-use crate::view::element::Element;
+use seed::button;
+use seed::prelude::*;
 
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
 
-pub struct Button<MSG> {
-    label: String,
+#[derive(Copy, Clone)]
+pub struct Button<'a, MSG> {
+    label: &'a str,
     on_click: MSG,
 }
 
@@ -14,19 +15,19 @@ pub struct Button<MSG> {
 // API //
 ////////////////////////////////////////////////////////////////
 
-pub fn button<MSG>(label: &str, on_click: MSG) -> Button<MSG> {
+pub fn button<'a, MSG>(label: &'a str, on_click: MSG) -> Button<'a, MSG> {
     Button {
-        label: label.to_string(),
+        label: label,
         on_click,
     }
 }
 
-impl<T> Button<T> {
-    pub fn view(self) -> Element<T> {
-        let mut attrs = Vec::new();
-
-        attrs.push(element::on_click(self.on_click));
-
-        element::tag("button", attrs, vec![element::text(self.label.as_str())])
+impl<T> Button<'static, T>
+where
+    T: 'static,
+    T: Clone,
+{
+    pub fn view(self) -> Node<T> {
+        button![self.label, ev(Ev::Click, |_| self.on_click)]
     }
 }
