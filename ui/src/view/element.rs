@@ -1,4 +1,10 @@
-use yew::prelude::Html;
+use crate::program;
+use crate::program::Program;
+use std::rc::Rc;
+use yew::callback::Callback;
+use yew::html;
+use yew::prelude::{Component, ComponentLink, Html};
+use yew::services::console::ConsoleService;
 use yew::virtual_dom;
 use yew::virtual_dom::vtag::VTag;
 use yew::virtual_dom::vtext::VText;
@@ -58,8 +64,11 @@ pub fn on_click<MSG>(msg: MSG) -> Attribute<MSG> {
     OnClick(msg)
 }
 
-impl<T> Element<T> {
-    pub fn to_html<U>(&self, to_msg: fn(T) -> U) -> Html {
+impl<T> Element<T>
+where
+    T: Clone,
+{
+    pub fn html(self, link: &ComponentLink<Program>, to_msg: fn(T) -> program::Msg) -> Html {
         match self {
             Element::Text(text_content) => {
                 virtual_dom::VNode::VText(VText::new(text_content.to_string()))
@@ -73,15 +82,26 @@ impl<T> Element<T> {
 
                 for attr in attrs {
                     match attr {
-                        Attribute::OnClick(_msg) => {
-                            // TODO Implement On Click
+                        Attribute::OnClick(msg) => {
+                            let wrapped_msg = to_msg(msg);
+                            let send = |_| {
+                                link.send_message(wrapped_msg);
+                            };
+
+                            let send_rc = Rc::new(send);
+
+                            let callback = Callback::Callback(send_rc);
+
+                            let on_click_listener = html::onclick::Wrapper::new(callback);
+
+                            tag.listeners.push(Rc::new(on_click_listener));
                         }
                         Attribute::Center => tag.classes.push("center"),
                     }
                 }
 
                 for child in children {
-                    tag.children.push(child.to_html(to_msg));
+                    tag.children.push(child.html(link, to_msg));
                 }
 
                 virtual_dom::VNode::VTag(Box::new(tag))
