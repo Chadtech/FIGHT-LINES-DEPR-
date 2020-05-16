@@ -1,9 +1,6 @@
 use crate::view::button::button;
-use crate::view::grid::cell::cell;
 use crate::view::grid::row;
-use crate::view::grid::row::row;
 use crate::view::text::text;
-use seed::div;
 use seed::prelude::*;
 
 ////////////////////////////////////////////////////////////////
@@ -45,9 +42,9 @@ pub fn update(msg: Msg, model: &mut Model) {
 
 pub fn view(model: &Model) -> Vec<Node<Msg>> {
     row::many(vec![
-        row(vec![cell(vec![text("FIGHT LINES")])]).center(true),
-        row(vec![cell(vec![button("Start", Msg::StartClicked).view()])]).center(true),
-        row(vec![cell(vec![go_view(model.clicked)])]).center(true),
+        row::single(text("FIGHT LINES")).center(true),
+        row::single(button("Start", Msg::StartClicked).view()).center(true),
+        row::single(go_view(model.clicked)).center(true),
     ])
     .view()
 }

@@ -18,6 +18,10 @@ pub fn cell<MSG>(children: Vec<Node<MSG>>) -> Cell<MSG> {
     Cell { children }
 }
 
+pub fn single<MSG>(child: Node<MSG>) -> Cell<MSG> {
+    cell(vec![child])
+}
+
 impl<T> Cell<T> {
     pub fn view(self) -> Node<T> {
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("row")));

@@ -1,3 +1,4 @@
+use crate::view::grid::cell;
 use crate::view::grid::cell::Cell;
 use seed::dom_entity_names::Tag;
 use seed::prelude::*;
@@ -25,6 +26,10 @@ pub fn row<MSG>(cells: Vec<Cell<MSG>>) -> Row<MSG> {
         cells,
         center: false,
     }
+}
+
+pub fn single<MSG>(child: Node<MSG>) -> Row<MSG> {
+    row(vec![cell::single(child)])
 }
 
 pub fn many<MSG>(rows: Vec<Row<MSG>>) -> Many<MSG> {
