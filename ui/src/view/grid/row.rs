@@ -56,8 +56,11 @@ impl<T> Row<T> {
 
 impl<T> Many<T> {
     pub fn view(self) -> Vec<Node<T>> {
-        let iter_rows = self.rows.into_iter();
+        self.rows.into_iter().map(|row| row.view()).collect()
+    }
 
-        iter_rows.map(|row| row.view()).collect()
+    pub fn map_rows(mut self, f: fn(Row<T>) -> Row<T>) -> Many<T> {
+        self.rows = self.rows.into_iter().map(f).collect();
+        self
     }
 }

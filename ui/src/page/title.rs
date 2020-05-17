@@ -42,10 +42,11 @@ pub fn update(msg: Msg, model: &mut Model) {
 
 pub fn view(model: &Model) -> Vec<Node<Msg>> {
     row::many(vec![
-        row::single(text("FIGHT LINES")).center(true),
-        row::single(button("Start", Msg::StartClicked).view()).center(true),
-        row::single(go_view(model.clicked)).center(true),
+        row::single(text("FIGHT LINES")),
+        row::single(button("Start", Msg::StartClicked).view()),
+        row::single(go_view(model.clicked)),
     ])
+    .map_rows(|row| row.center(true))
     .view()
 }
 
