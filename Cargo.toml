@@ -4,5 +4,6 @@ members = [
     "dev-css",
     "moves",
     "server",
-    "ui"
+    "ui",
+    "code-gen"
 ]

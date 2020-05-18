@@ -1,5 +1,6 @@
 use crate::view::grid::cell;
 use crate::view::grid::cell::Cell;
+use crate::view::style;
 use seed::dom_entity_names::Tag;
 use seed::prelude::*;
 use std::borrow::Cow;
@@ -41,8 +42,11 @@ impl<T> Row<T> {
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("row")));
 
         if self.center {
-            element.add_class("center");
+            let center_class = "center";
+            element.add_class(center_class);
         }
+
+        style::apply(vec![style::padding(4)], &mut element);
 
         element.children = self.cells.into_iter().map(|cell| cell.view()).collect();
         Node::Element(element)
@@ -56,8 +60,11 @@ impl<T> Row<T> {
 
 impl<T> Many<T> {
     pub fn view(self) -> Vec<Node<T>> {
-        let iter_rows = self.rows.into_iter();
+        self.rows.into_iter().map(|row| row.view()).collect()
+    }
 
-        iter_rows.map(|row| row.view()).collect()
+    pub fn map_rows(mut self, f: fn(Row<T>) -> Row<T>) -> Many<T> {
+        self.rows = self.rows.into_iter().map(f).collect();
+        self
     }
 }

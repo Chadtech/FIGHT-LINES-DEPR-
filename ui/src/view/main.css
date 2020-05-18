@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+
+    --size-0: 1px;
+    --size-1: 2px;
+    --size-2: 4px;
+    --size-3: 8px;
+    --size-4: 16px;
+    --size-5: 32px;
+}
+
+row {
+    display: flex;
+}
+
+.center {
+    justify-content: center;
+}
