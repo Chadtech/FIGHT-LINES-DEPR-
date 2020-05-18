@@ -24,7 +24,7 @@ pub fn single<MSG>(child: Node<MSG>) -> Cell<MSG> {
 
 impl<T> Cell<T> {
     pub fn view(self) -> Node<T> {
-        let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("row")));
+        let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("cell")));
         element.children = self.children;
         Node::Element(element)
     }
