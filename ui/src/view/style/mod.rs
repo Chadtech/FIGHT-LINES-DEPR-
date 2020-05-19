@@ -4,6 +4,7 @@ use seed::prelude::*;
 /// This module name comes from generated code, so if
 /// you rename it here, also rename it in the script
 /// which is located in /code-gen/src/main.rs
+#[allow(dead_code)]
 pub mod gen_const;
 
 pub struct Style {

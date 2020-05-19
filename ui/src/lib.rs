@@ -1,5 +1,6 @@
 #![allow(clippy::wildcard_imports)]
 use crate::route::Route;
+use crate::Model::PageNotFound;
 use crate::Msg::TitleMsg;
 use seed::{prelude::*, *};
 
@@ -16,8 +17,14 @@ enum Model {
     Title(page::title::Model),
 }
 
-#[derive(Copy, Clone)]
+// impl Default for Model {
+//     fn default() -> Self {
+//         PageNotFound
+//     }
+// }
+
 enum Msg {
+    RouteChanged(Option<Route>),
     TitleMsg(page::title::Msg),
 }
 
@@ -30,6 +37,7 @@ fn init<'a>(url: Url, _: &mut impl Orders<Msg>) -> Model {
         None => Model::PageNotFound,
         Some(route) => match route {
             Route::Title => Model::Title(page::title::init()),
+            Route::StartGame => Model::PageNotFound,
         },
     }
 }
@@ -45,6 +53,22 @@ fn update<'a>(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 page::title::update(sub_msg, sub_model)
             }
         }
+        Msg::RouteChanged(maybe_route) => {
+            handle_route(maybe_route, model);
+        }
+    }
+}
+
+fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
+    match maybe_route {
+        None => *model = PageNotFound,
+        Some(route) => match route {
+            Route::Title => match model {
+                Model::Title(_) => {}
+                _ => *model = Model::Title(page::title::init()),
+            },
+            Route::StartGame => *model = PageNotFound,
+        },
     }
 }
 
@@ -70,6 +94,6 @@ fn view(model: &Model) -> Node<Msg> {
 
 #[wasm_bindgen(start)]
 pub fn start() {
-    // Mount the `app` to the element with the `id` "app".
+    // App::builder(update, view).build_and_start();
     App::start("app", init, update, view);
 }

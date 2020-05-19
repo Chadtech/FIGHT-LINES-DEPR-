@@ -1,4 +1,5 @@
-use crate::view::button::button;
+use crate::route::Route;
+use crate::view::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use seed::prelude::*;
@@ -43,7 +44,7 @@ pub fn update(msg: Msg, model: &mut Model) {
 pub fn view(model: &Model) -> Vec<Node<Msg>> {
     row::many(vec![
         row::single(text("FIGHT LINES")),
-        row::single(button("Start", Msg::StartClicked).view()),
+        row::single(button::route("Start", Route::StartGame).view()),
         row::single(go_view(model.clicked)),
     ])
     .map_rows(|row| row.center(true))
