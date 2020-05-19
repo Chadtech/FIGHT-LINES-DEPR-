@@ -8,6 +8,7 @@ use seed::Url;
 pub enum Route {
     Title,
     StartGame,
+    Demo,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -19,6 +20,7 @@ impl Route {
         match self {
             Route::Title => "",
             Route::StartGame => "start-game",
+            Route::Demo => "demo",
         }
     }
 }
@@ -26,6 +28,9 @@ impl Route {
 pub fn parse(url: Url) -> Option<Route> {
     if url.path().is_empty() {
         return Some(Route::Title);
+    }
+    if url.path()[0].eq("demo") {
+        return Some(Route::Demo);
     }
 
     None
