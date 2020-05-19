@@ -1,6 +1,5 @@
 #![allow(clippy::wildcard_imports)]
 use crate::route::Route;
-use crate::Model::PageNotFound;
 use crate::Msg::TitleMsg;
 use seed::{prelude::*, *};
 
@@ -61,13 +60,13 @@ fn update<'a>(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
 
 fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
     match maybe_route {
-        None => *model = PageNotFound,
+        None => *model = Model::PageNotFound,
         Some(route) => match route {
             Route::Title => match model {
                 Model::Title(_) => {}
                 _ => *model = Model::Title(page::title::init()),
             },
-            Route::StartGame => *model = PageNotFound,
+            Route::StartGame => *model = Model::PageNotFound,
         },
     }
 }
