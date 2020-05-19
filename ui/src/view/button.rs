@@ -65,7 +65,5 @@ where
         }
 
         Node::Element(element)
-        // button![self.label]
-        // button![self.label, ev(Ev::Click, |_| self.on_click)]
     }
 }
