@@ -14,6 +14,7 @@ enum Model {
     PageNotFound,
     Title,
     StartGame(page::start_game::Model),
+    Demo(page::demo::Model),
 }
 
 impl Default for Model {
@@ -26,6 +27,7 @@ impl Default for Model {
 enum Msg {
     RouteChanged(Option<Route>),
     StartGameMsg(page::start_game::Msg),
+    DemoMsg(page::demo::Msg),
 }
 
 ////////////////////////////////////////////////////////////////
@@ -33,8 +35,6 @@ enum Msg {
 ////////////////////////////////////////////////////////////////
 
 fn before_mount(_: Url) -> BeforeMount {
-    // Since we have the "loading..." text in the app section of index.html,
-    // we use MountType::Takover which will overwrite it with the seed generated html
     BeforeMount::new().mount_type(MountType::Takeover)
 }
 
@@ -59,6 +59,11 @@ fn update(msg: Msg, model: &mut Model, _: &mut impl Orders<Msg>) {
                 page::start_game::update(sub_msg, sub_model)
             }
         }
+        Msg::DemoMsg(sub_msg) => {
+            if let Model::Demo(sub_model) = model {
+                page::demo::update(sub_msg, sub_model)
+            }
+        }
     }
 }
 
@@ -73,6 +78,10 @@ fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
             Route::StartGame => match model {
                 Model::StartGame(_) => {}
                 _ => *model = Model::StartGame(page::start_game::init()),
+            },
+            Route::Demo => match model {
+                Model::Demo(_) => {}
+                _ => *model = Model::Demo(page::demo::init()),
             },
         },
     }
@@ -89,6 +98,10 @@ fn view(model: &Model) -> Node<Msg> {
         Model::StartGame(sub_model) => page::start_game::view(sub_model)
             .into_iter()
             .map(|node| node.map_msg(Msg::StartGameMsg))
+            .collect(),
+        Model::Demo(sub_model) => page::demo::view(sub_model)
+            .into_iter()
+            .map(|node| node.map_msg(Msg::DemoMsg))
             .collect(),
     };
 

@@ -8,6 +8,7 @@ use seed::Url;
 pub enum Route {
     Title,
     StartGame,
+    Demo,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -19,6 +20,7 @@ impl Route {
         match self {
             Route::Title => vec![],
             Route::StartGame => vec!["start-game"],
+            Route::Demo => vec!["demo"],
         }
     }
     pub fn to_string(self) -> String {
@@ -39,6 +41,7 @@ pub fn parse(url: Url) -> Option<Route> {
         None => Some(Route::Title),
         Some(first) => match first.as_str() {
             "start-game" => Some(Route::StartGame),
+            "demo" => Some(Route::Demo),
             _ => None,
         },
     }
