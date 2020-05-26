@@ -1450,7 +1450,8 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 [[package]]
 name = "seed"
 version = "0.7.0"
-source = "git+https://github.com/seed-rs/seed?rev=b25cf59#b25cf5990ae2189548281942713f4e305743f6d5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "882f4569a394bbb2f15f2fc410e0fbcef178fe24fc2d91599607a598443c6df8"
 dependencies = [
  "console_error_panic_hook",
  "cookie",

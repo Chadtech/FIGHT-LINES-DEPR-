@@ -16,22 +16,33 @@ pub enum Route {
 ////////////////////////////////////////////////////////////////
 
 impl Route {
-    pub fn as_str(self) -> &'static str {
+    pub fn path(&self) -> Vec<&str> {
         match self {
-            Route::Title => "",
-            Route::StartGame => "start-game",
-            Route::Demo => "demo",
+            Route::Title => vec![],
+            Route::StartGame => vec!["start-game"],
+            Route::Demo => vec!["demo"],
         }
+    }
+    pub fn to_string(self) -> String {
+        let mut buf = String::new();
+
+        buf.push('/');
+
+        buf.push_str(&self.path().join("/"));
+
+        buf
     }
 }
 
 pub fn parse(url: Url) -> Option<Route> {
-    if url.path().is_empty() {
-        return Some(Route::Title);
-    }
-    if url.path()[0].eq("demo") {
-        return Some(Route::Demo);
-    }
+    let mut path = url.path().iter();
 
-    None
+    match path.next() {
+        None => Some(Route::Title),
+        Some(first) => match first.as_str() {
+            "start-game" => Some(Route::StartGame),
+            "demo" => Some(Route::Demo),
+            _ => None,
+        },
+    }
 }

@@ -47,7 +47,7 @@ pub fn update(msg: Msg, model: &mut Model) {
 pub fn view(model: &Model) -> Vec<Node<Msg>> {
     row::many(vec![
         row::single(text("Demo Page")),
-        row::single(button::button("Demo Start Button", Msg::StartClicked).view()),
+        row::single(button::button("Demo Start Button", |_| Msg::StartClicked).view()),
         row::single(go_view(model.clicked)),
         row::single(h1!["The Grand Total"]),
         row::row(vec![
