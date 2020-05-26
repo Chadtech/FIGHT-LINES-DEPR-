@@ -8,7 +8,11 @@ use seed::prelude::*;
 // VIEW //
 ////////////////////////////////////////////////////////////////
 
-pub fn view<MSG>() -> Vec<Node<MSG>> {
+pub fn view<MSG>() -> Vec<Node<MSG>>
+where
+    MSG: Clone,
+    MSG: 'static,
+{
     row::many(vec![
         row::single(text("FIGHT LINES")),
         row::single(button::route("Start", Route::StartGame).view()),

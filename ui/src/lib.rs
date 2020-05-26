@@ -22,6 +22,7 @@ impl Default for Model {
     }
 }
 
+#[derive(Clone)]
 enum Msg {
     RouteChanged(Option<Route>),
     StartGameMsg(page::start_game::Msg),

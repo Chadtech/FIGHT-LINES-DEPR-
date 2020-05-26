@@ -1,38 +1,45 @@
 use seed::dom_entity_names::Tag;
-use seed::log;
 use seed::prelude::*;
 use std::borrow::Cow;
+use std::rc::Rc;
 
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
 
-#[derive(Copy, Clone)]
-pub struct TextField<'a> {
-    value: &'a str,
-    placeholder: Option<&'a str>,
+#[derive(Clone)]
+pub struct TextField<MSG: 'static> {
+    value: String,
+    placeholder: Option<String>,
+    on_input: Rc<dyn Fn(String) -> MSG>,
 }
 
 ////////////////////////////////////////////////////////////////
 // API //
 ////////////////////////////////////////////////////////////////
 
-pub fn text_field<'a>(value: &'a str) -> TextField<'a> {
+pub fn text_field<MSG>(
+    value: &str,
+    on_input: impl FnOnce(String) -> MSG + Clone + 'static,
+) -> TextField<MSG> {
     TextField {
-        value,
+        value: value.to_string(),
         placeholder: None,
+        on_input: Rc::new(move |event| on_input.clone()(event)),
     }
 }
 
-impl<'a> TextField<'a> {
-    pub fn view<T>(self) -> Node<T> {
+impl<T> TextField<T> {
+    pub fn view(self) -> Node<T>
+    where
+        T: Clone,
+        T: 'static,
+    {
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("input")));
 
-        element.add_event_handler(ev(Ev::Input, |new_value| {
-            log(new_value);
+        let on_input = self.on_input;
 
-            ()
-        }));
+        element.add_event_handler(input_ev(Ev::Input, move |event| on_input(event)));
 
         element.add_attr(Cow::Borrowed("value"), self.value);
 
@@ -46,8 +53,8 @@ impl<'a> TextField<'a> {
         Node::Element(element)
     }
 
-    pub fn placeholder(&'a mut self, placeholder_text: &'a str) -> &'a mut Self {
-        self.placeholder = Some(placeholder_text);
+    pub fn placeholder(mut self, placeholder_text: &str) -> TextField<T> {
+        self.placeholder = Some(placeholder_text.to_string());
         self
     }
 }
