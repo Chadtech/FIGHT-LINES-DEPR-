@@ -1,13 +1,17 @@
+mod protos;
+
 use actix_files::Files;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
-
 use server::domain::game;
 use server::domain::model;
 use server::domain::model::FormData;
 use server::domain::model::Model;
 use std::io;
 use std::sync::Mutex;
+
+use protobuf::{parse_from_bytes, Message};
+use protos::logic::GameRequest;
 
 /// Responder Objects
 /// GET /
@@ -36,12 +40,18 @@ async fn post_game(form: web::Form<FormData>, model: web::Data<Mutex<Model>>) ->
     ))
 }
 
+async fn proto_test() -> impl Responder {
+    let mut out_response = GameRequest::new();
+    out_response.set_gameName("Response Game".to_string());
+    out_response.set_numPlayers(55);
+    HttpResponse::Ok().body(out_response.take_gameName())
+}
+
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
     use middleware::Logger;
 
     env_logger::from_env(Env::default().default_filter_or("info")).init();
-
     let global_state = web::Data::new(Mutex::new(model::init(205_693_129)));
 
     HttpServer::new(move || {
@@ -53,6 +63,7 @@ async fn main() -> io::Result<()> {
             .route("/again", web::get().to(index2))
             .route("/games/count", web::get().to(game_count))
             .route("/game/create", web::post().to(post_game))
+            .route("/game/resp", web::get().to(proto_test))
             .service(Files::new("/game", "./static").index_file("index.html"))
     })
     .bind("127.0.0.1:2943")?
