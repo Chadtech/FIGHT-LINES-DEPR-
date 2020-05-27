@@ -26,8 +26,12 @@ fn indent(buf: &mut String, size: u8, with_text: &str) {
 // STYLE CODE //
 ////////////////////////////////////////////////////////////////
 
+
+
+
+
 fn style_constants() -> String {
-    let mut buf: String = String::new();
+    let mut buf: String =    String::new();
 
     buf.push_str(indoc!(
         r#"
