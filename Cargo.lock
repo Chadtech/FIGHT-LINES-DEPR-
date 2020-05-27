@@ -1877,6 +1877,7 @@ name = "ui"
 version = "0.1.0"
 dependencies = [
  "seed",
+ "serde",
  "wasm-bindgen-test",
 ]
 

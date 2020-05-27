@@ -3,6 +3,7 @@ use crate::route::Route;
 use seed::{prelude::*, *};
 
 mod page;
+mod requests;
 mod route;
 mod view;
 
@@ -13,7 +14,7 @@ mod view;
 enum Model {
     PageNotFound,
     Title(page::title::Model),
-    Demo(page::demo::Model),
+    Demo(page::demo::Form),
 }
 
 // impl Default for Model {
