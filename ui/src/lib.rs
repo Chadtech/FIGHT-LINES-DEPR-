@@ -119,5 +119,4 @@ pub fn start() {
         .after_mount(after_mount)
         .routes(|url| Some(Msg::RouteChanged(route::parse(url))))
         .build_and_start();
-    // App::start("app", init, update, view);
 }
