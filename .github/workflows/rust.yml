@@ -18,6 +18,6 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: format
-      run:  cargo fmt --check
+      run:  rustfmt --check
     - name: clippy
       run: cargo clippy
