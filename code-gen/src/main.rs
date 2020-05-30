@@ -22,9 +22,6 @@ fn indent(buf: &mut String, size: u8, with_text: &str) {
     buf.push_str(with_text);
 }
 
-fn camelCaseName() -> u8 {
-    4
-}
 
 
 
@@ -205,5 +202,4 @@ fn side_style_str(has_side: &str, side: &str, size: u8) -> String {
             base_number.pow(size as u32)
         )
     )
-    .to_owned()
 }
