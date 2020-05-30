@@ -14,7 +14,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-
+    - name: cargo fmt --check
+      uses: actions-rs/clippy-check@v1.0.5
+      with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all -- --check
+          
     - name: rust-clippy-check
       uses: actions-rs/clippy-check@v1.0.5
       with:
@@ -22,12 +27,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: -- -D warnings  
         
-
-    - name: cargo fmt --check
-      uses: actions-rs/clippy-check@v1.0.5
-      with:
-          command: fmt
-          args: --all -- --check
             
     - name: Build
       run: cargo build --verbose
