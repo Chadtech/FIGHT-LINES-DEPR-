@@ -19,7 +19,7 @@ jobs:
       run: cargo test --verbose
     - name: rust-rustfmt-check
       uses: mbrobbel/rustfmt-check@0.2.0
-      with:
+      # with:
         # GitHub token
         # token: 
         # Arguments for cargo. Not for rustfmt options.
