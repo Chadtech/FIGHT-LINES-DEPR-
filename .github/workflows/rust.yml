@@ -13,10 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    
+    - run: rustup component add rustfmt
+    
     - name: cargo fmt --check
       uses: actions-rs/clippy-check@v1.0.5
       with:
+          command: fmt
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all -- --check
           
