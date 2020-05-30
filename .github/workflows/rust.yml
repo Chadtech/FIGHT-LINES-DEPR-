@@ -1,12 +1,23 @@
 name: Rust
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            components: rustfmt
+            override: true
+      - uses: mbrobbel/rustfmt-check@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}:
+          
   build:
 
     runs-on: ubuntu-latest
@@ -17,10 +28,5 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-    - name: rust-rustfmt-check
-      uses: mbrobbel/rustfmt-check@0.2.0
-      with:
-        # GitHub token
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # Arguments for cargo. Not for rustfmt options.
-        # args: # optional
+
+
