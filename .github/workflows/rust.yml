@@ -16,7 +16,7 @@ jobs:
             override: true
       - uses: mbrobbel/rustfmt-check@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}:
+          token: ${{ secrets.GITHUB_TOKEN }}
           
   build:
 
