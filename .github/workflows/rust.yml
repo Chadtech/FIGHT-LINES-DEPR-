@@ -20,6 +20,8 @@ jobs:
       with:
         # GitHub token
         token: ${{ secrets.GITHUB_TOKEN }}
+        command: clippy
+        args: -- -D warnings  
     - name: Build
       run: cargo build --verbose
     - name: Run tests
