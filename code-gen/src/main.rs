@@ -25,6 +25,12 @@ fn indent(buf: &mut String, size: u8, with_text: &str) {
 
 
 
+fn camelCasey() -> Int {
+    4
+}
+
+
+
 
 ////////////////////////////////////////////////////////////////
 // STYLE CODE //
