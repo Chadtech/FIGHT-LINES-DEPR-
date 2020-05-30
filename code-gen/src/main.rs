@@ -22,19 +22,9 @@ fn indent(buf: &mut String, size: u8, with_text: &str) {
     buf.push_str(with_text);
 }
 
-
-
-
 fn camelCasey() -> Int {
     4
 }
-
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////
 // STYLE CODE //
