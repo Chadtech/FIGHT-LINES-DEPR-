@@ -1,5 +1,3 @@
-mod protos;
-
 use actix_files::Files;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;

@@ -475,6 +475,7 @@ name = "code-gen"
 version = "0.1.0"
 dependencies = [
  "indoc",
+ "protobuf-codegen-pure",
 ]
 
 [[package]]
@@ -1587,7 +1588,6 @@ dependencies = [
  "env_logger",
  "fightlines_moves",
  "protobuf",
- "protobuf-codegen-pure",
  "rand 0.3.23",
  "serde",
 ]

@@ -1,3 +1,5 @@
+extern crate protobuf_codegen_pure;
+
 use indoc::indoc;
 use std::fs::File;
 use std::io::Write;
@@ -8,6 +10,16 @@ fn main() -> std::io::Result<()> {
 
     let mut style_constants_file = File::create("../ui/src/view/style/gen_const.rs")?;
     style_constants_file.write_all(style_constants().as_bytes())?;
+
+    protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
+        out_dir: "src/protos",
+        input: &["src/protos/game_request.proto"],
+        includes: &["src/protos"],
+        customize: protobuf_codegen_pure::Customize {
+            ..Default::default()
+        },
+    })
+    .expect("protoc");
 
     Ok(())
 }
