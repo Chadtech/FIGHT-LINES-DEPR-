@@ -5,20 +5,20 @@ use seed::dom_entity_names::Tag;
 use seed::prelude::*;
 use seed::prelude::{El, Node};
 use std::borrow::Cow;
+use std::rc::Rc;
+use web_sys::MouseEvent;
 
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
 
-#[derive(Copy, Clone)]
-pub struct Button<'a, MSG> {
-    label: &'a str,
+pub struct Button<MSG: 'static> {
+    label: String,
     on_click: Click<MSG>,
 }
 
-#[derive(Copy, Clone)]
 enum Click<MSG> {
-    Handler(MSG),
+    Handler(Rc<dyn Fn(MouseEvent) -> MSG>),
     Route(route::Route),
 }
 
@@ -26,24 +26,27 @@ enum Click<MSG> {
 // API //
 ////////////////////////////////////////////////////////////////
 
-pub fn button<'a, MSG>(label: &'a str, on_click: MSG) -> Button<'a, MSG> {
+pub fn button<MSG>(
+    label: &str,
+    on_click: impl FnOnce(MouseEvent) -> MSG + Clone + 'static,
+) -> Button<MSG> {
     Button {
-        label: label,
-        on_click: Handler(on_click),
+        label: label.to_string(),
+        on_click: Handler(Rc::new(move |event| on_click.clone()(event))),
     }
 }
 
-pub fn route<'a, MSG>(label: &'a str, route: route::Route) -> Button<'a, MSG> {
+pub fn route<MSG>(label: &str, route: route::Route) -> Button<MSG> {
     Button {
-        label: label,
+        label: label.to_string(),
         on_click: Route(route),
     }
 }
 
-impl<T> Button<'static, T>
+impl<T> Button<T>
 where
-    T: 'static,
     T: Clone,
+    T: 'static,
 {
     pub fn view(self) -> Node<T> {
         let tag = match self.on_click {
@@ -53,14 +56,14 @@ where
 
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed(tag)));
 
-        element.children.push(text(self.label));
+        element.children.push(text(self.label.as_str()));
 
         match self.on_click {
-            Handler(msg) => {
-                element.add_event_handler(ev(Ev::Click, |_| msg));
+            Handler(on_click) => {
+                element.add_event_handler(mouse_ev(Ev::Click, move |event| on_click(event)));
             }
             Route(route) => {
-                element.add_attr(Cow::Borrowed("href"), route.as_str());
+                element.add_attr(Cow::Borrowed("href"), route.to_string());
             }
         }
 

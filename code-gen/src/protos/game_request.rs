@@ -27,12 +27,15 @@ use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 // const _PROTOBUF_VERSION_CHECK: () = ::protobuf::VERSION_2_14_0;
 
 #[derive(PartialEq,Clone,Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct GameRequest {
     // message fields
     pub gameName: ::std::string::String,
     pub numPlayers: i32,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 

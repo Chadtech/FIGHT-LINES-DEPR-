@@ -5,17 +5,26 @@ use std::fs::File;
 use std::io::Write;
 
 fn main() -> std::io::Result<()> {
+    //
+    // CSS
+    //
+
     let mut css_file = File::create("../ui/src/view/style/gen.css")?;
     css_file.write_all(css().as_bytes())?;
 
     let mut style_constants_file = File::create("../ui/src/view/style/gen_const.rs")?;
     style_constants_file.write_all(style_constants().as_bytes())?;
 
+    //
+    // PROTOBUF
+    //
+
     protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
         out_dir: "src/protos",
         input: &["src/protos/game_request.proto"],
         includes: &["src/protos"],
         customize: protobuf_codegen_pure::Customize {
+            serde_derive: Some(true),
             ..Default::default()
         },
     })

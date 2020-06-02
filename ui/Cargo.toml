@@ -14,15 +14,19 @@ wasm-bindgen-test = "0.3.12"
 # Referenced commit fixes base url and memory bugs in Seed 0.7.0
 # (https://github.com/seed-rs/seed/pull/454 + https://github.com/seed-rs/seed/pull/455).
 # Replace with "0.8.0" once the new Seed version is released.
-seed = { git = "https://github.com/seed-rs/seed", rev = "b25cf59" }
-serde="1.0"
-
+seed = "0.7.0"
+serde = { version = "1.0.111", features = ['derive'] }
+serde_bytes = "0.11"
+code-gen = { path = "../code-gen" }
+bincode = "1.2.1"
+protobuf = "2"
+futures = "^0.3.4"
+hex = "0.4.2"
 
 [profile.release]
 lto = true
 opt-level = 'z'
 codegen-units = 1
-
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ['-Os']

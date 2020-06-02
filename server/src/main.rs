@@ -1,5 +1,6 @@
 use actix_files::Files;
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
+use code_gen::protos::game_request::GameRequest;
 use env_logger::Env;
 use server::domain::game;
 use server::domain::model;
@@ -7,9 +8,6 @@ use server::domain::model::FormData;
 use server::domain::model::Model;
 use std::io;
 use std::sync::Mutex;
-
-use protobuf::{parse_from_bytes, Message};
-use protos::logic::GameRequest;
 
 /// Responder Objects
 /// GET /

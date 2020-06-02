@@ -1,0 +1,11 @@
+on: [pull_request]
+name: Fmt
+jobs:
+  clippy_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: icepuma/rust-action@master
+        with:
+          args: cargo fmt -- --check

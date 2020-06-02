@@ -1,23 +1,19 @@
-use crate::route::Route;
 use crate::view::grid::cell;
 
-use crate::requests;
 use crate::view::grid::row;
 use crate::view::text::text;
-use seed::fetch::Method;
-use seed::log;
 use seed::{prelude::*, *};
-use serde::{Deserialize, Serialize};
+
 ////////////////////////////////////////////////////////////////
 // TYPES //
 ////////////////////////////////////////////////////////////////
 
-#[derive(Deserialize)]
 pub struct Form {
     game_name: String,
     num_players: i64,
 }
 
+#[derive(Clone)]
 pub enum Msg {
     FormSubmitted,
     GameNameChanged(String),
@@ -70,13 +66,13 @@ pub fn view(model: &Form) -> Vec<Node<Msg>> {
     .view()
 }
 
-fn view_form(form: &Form) -> Node<Msg> {
+fn view_form(_form: &Form) -> Node<Msg> {
     form![
         attrs! {
             At::Method => "POST"
             At::Action => "//localhost:2943/game/create"
         },
-        ev(Ev::Submit, |event| {
+        ev(Ev::Submit, |_| {
             // event.prevent_default();
             Msg::FormSubmitted
         }),
