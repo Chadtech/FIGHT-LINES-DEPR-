@@ -16,3 +16,4 @@ actix-files = "0.2.1"
 serde="1.0"
 protobuf = "2"
 code-gen = { path = "../code-gen" }
+actix-cors = "0.2.0"
