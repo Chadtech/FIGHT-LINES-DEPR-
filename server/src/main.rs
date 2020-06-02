@@ -28,13 +28,15 @@ async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-async fn post_game(form: web::Form<FormData>, model: web::Data<Mutex<Model>>) -> impl Responder {
-    let mut data = model.lock().unwrap();
-    data.add_game(game::init(&form.game_name));
-    HttpResponse::Ok().body(format!(
-        "Game Name: {}, Num_Players: {}",
-        form.game_name, form.num_players
-    ))
+async fn post_game(model: web::Data<Mutex<Model>>) -> impl Responder {
+    // let mut data = model.lock().unwrap();
+    // data.add_game(game::init(&form.game_name));
+    HttpResponse::Ok()
+
+    //     .body(format!(
+    //     "Game Name: {}, Num_Players: {}",
+    //     form.game_name, form.num_players
+    // ))
 }
 
 async fn proto_test() -> impl Responder {
@@ -59,11 +61,10 @@ async fn main() -> io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .wrap(
                 Cors::new()
-                    .allowed_origin("http://localhost:8080")
+                    .allowed_origin("http://localhost:8000")
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
-                    .max_age(3600)
                     .finish(),
             )
             .route("/", web::get().to(index))
