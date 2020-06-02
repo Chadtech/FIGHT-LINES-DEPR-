@@ -1,5 +1,6 @@
 use actix_files::Files;
-use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{http, middleware, web, App};
+use actix_web::{HttpResponse, HttpServer, Responder};
 use code_gen::protos::game_request::GameRequest;
 use env_logger::Env;
 use server::domain::game;
@@ -45,6 +46,7 @@ async fn proto_test() -> impl Responder {
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
+    use actix_cors::Cors;
     use middleware::Logger;
 
     env_logger::from_env(Env::default().default_filter_or("info")).init();
@@ -55,6 +57,14 @@ async fn main() -> io::Result<()> {
             .app_data(global_state.clone())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(
+                Cors::new()
+                    .allowed_origin("https://localhost:8080")
+                    .allowed_methods(vec!["GET", "POST"])
+                    .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+                    .allowed_header(http::header::CONTENT_TYPE)
+                    .max_age(3600)
+                    .finish())
             .route("/", web::get().to(index))
             .route("/again", web::get().to(index2))
             .route("/games/count", web::get().to(game_count))
