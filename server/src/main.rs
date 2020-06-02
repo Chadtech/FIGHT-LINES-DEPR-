@@ -59,12 +59,13 @@ async fn main() -> io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .wrap(
                 Cors::new()
-                    .allowed_origin("https://localhost:8080")
+                    .allowed_origin("http://localhost:8080")
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
                     .max_age(3600)
-                    .finish())
+                    .finish(),
+            )
             .route("/", web::get().to(index))
             .route("/again", web::get().to(index2))
             .route("/games/count", web::get().to(game_count))
