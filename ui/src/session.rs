@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 ////////////////////////////////////////////////////////////////
 // TYPES //
 ////////////////////////////////////////////////////////////////
@@ -26,12 +24,12 @@ static DEV_API_URL: &str = "http://localhost:2943";
 ////////////////////////////////////////////////////////////////
 
 impl Session {
-    pub fn url(self, path: &str) -> Cow<'static, str> {
+    pub fn url(self, path: &str) -> String {
         let mut buf: String = String::new();
 
         buf.push_str(self.api_url);
         buf.push_str(path);
 
-        Cow::Owned(buf)
+        buf
     }
 }

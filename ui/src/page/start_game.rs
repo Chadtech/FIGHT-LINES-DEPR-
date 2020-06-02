@@ -34,7 +34,7 @@ pub enum Response {
 }
 
 impl Model {
-    pub fn get_session(self) -> Session {
+    pub fn get_session(&self) -> Session {
         self.session
     }
     pub fn update_game_name(&mut self, new_name: String) {
@@ -69,18 +69,13 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 
             game_request.set_gameName("Barney's Big Game".to_string());
 
-            // let url = *model.get_session().url("/game/create");
+            let url = model.get_session().url("/game/create");
 
             match game_request.write_to_bytes() {
                 Ok(bytes) => {
                     orders.skip().perform_cmd({
                         async {
-                            let response = match send_message(
-                                "http://localhost:2943/game/create",
-                                bytes,
-                            )
-                            .await
-                            {
+                            let response = match send_message(url, bytes).await {
                                 Ok(_) => Response::Yep,
                                 Err(_) => Response::Nope,
                             };
@@ -103,12 +98,8 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     }
 }
 
-// fn get_request_url() -> impl Into<Cow<'static, str>> {
-//     "http://localhost:2943/game/create"
-// }
-
-async fn send_message(url: &str, bytes: Vec<u8>) -> fetch::Result<Response> {
-    Request::new(url)
+async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<Response> {
+    Request::new(url.as_str())
         .method(Method::Post)
         .text(hex::encode(bytes))
         .fetch()

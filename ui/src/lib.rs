@@ -19,12 +19,6 @@ enum Model {
     Demo(Session, page::demo::Form),
 }
 
-// impl Default for Model {
-//     fn default() -> Self {
-//         Model::PageNotFound
-//     }
-// }
-
 #[derive(Clone)]
 enum Msg {
     RouteChanged(Option<Route>),
@@ -37,13 +31,12 @@ enum Msg {
 
 impl Model {
     pub fn get_session(&mut self) -> Session {
-        session::init_dev()
-        // match &self {
-        //     Model::PageNotFound(session) => session,
-        //     Model::Title(session) => session,
-        //     Model::StartGame(sub_model) => sub_model.get_session(),
-        //     Model::Demo(session, _) => session,
-        // }
+        match &self {
+            Model::PageNotFound(session) => *session,
+            Model::Title(session) => *session,
+            Model::StartGame(sub_model) => sub_model.get_session(),
+            Model::Demo(session, _) => *session,
+        }
     }
 }
 
@@ -58,6 +51,10 @@ fn before_mount(_: Url) -> BeforeMount {
 fn after_mount<'a>(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     orders.send_msg(Msg::RouteChanged(route::parse(url)));
 
+    // TODO we need some kind of logic to determine
+    // if we should use `init_dev()`, because in some
+    // cases, like during a real deployment, we dont want a
+    // dev session
     let model = Model::PageNotFound(session::init_dev());
     AfterMount::new(model).url_handling(UrlHandling::PassToRoutes)
 }
@@ -97,11 +94,10 @@ fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
                 Model::StartGame(_) => {}
                 _ => *model = Model::StartGame(page::start_game::init(session)),
             },
-            _ => {}
-            // Route::Demo => match model {
-            //     Model::Demo(_, _) => {}
-            //     _ => *model = Model::Demo(session, page::demo::init()),
-            // },
+            Route::Demo => match model {
+                Model::Demo(_, _) => {}
+                _ => *model = Model::Demo(session, page::demo::init()),
+            },
         },
     }
 }
