@@ -28,7 +28,7 @@ pub async fn post_game(data: web::Bytes, model: web::Data<Mutex<Model>>) -> impl
     // let mut data = model.lock().unwrap();
 
     // data.add_game(game::init(&form.game_name));
-    "Hello POST Request World"
+    "Hello from POST Request"
 }
 
 pub async fn proto_test() -> impl Responder {

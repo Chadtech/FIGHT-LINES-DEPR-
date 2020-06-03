@@ -27,7 +27,6 @@ async fn main() -> io::Result<()> {
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
-                    .max_age(3600)
                     .finish(),
             )
             .route("/", web::get().to(route::index))
