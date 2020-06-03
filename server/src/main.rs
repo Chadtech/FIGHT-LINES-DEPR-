@@ -1,10 +1,11 @@
 use actix_files::Files;
 use actix_web::HttpServer;
 use actix_web::{http, middleware, web, App};
-use server::domain::model;
-use server::route;
 use std::io;
 use std::sync::Mutex;
+
+use server::domain::model;
+use server::route;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -22,7 +23,7 @@ async fn main() -> io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i"))
             .wrap(
                 Cors::new()
-                    .allowed_origin("http://localhost:8080")
+                    .allowed_origin("http://localhost:8000")
                     .allowed_methods(vec!["GET", "POST"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
