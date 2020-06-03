@@ -30,13 +30,10 @@ pub async fn post_game(mut body: String, model: web::Data<Mutex<Model>>) -> impl
     // data.add_game(game::init(&form.game_name));
     let mut gameX = GameRequest::new();
     match hex::decode(body) {
-        Ok(payload) => {
-            let game_request: GameRequest = gameX::parse_from_bytes(payload);
-        }
+        Ok(payload) => println!("Body {:?}!", payload),
         Err(_) => {}
     }
     // let game_r = gameX::merge_from_bytes(payload);
-    println!("Body {:?}!", payload);
     "Hello from POST Request"
 }
 
