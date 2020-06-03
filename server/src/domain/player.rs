@@ -26,6 +26,4 @@ impl Player {
     pub fn update_name(&mut self, new_name: String) {
         self.name = new_name
     }
-    
-
 }

@@ -4,7 +4,7 @@ use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
 use code_gen::protos::game_request::GameRequest;
-use protobuf::Message;
+use protobuf::{Message, ProtobufResult};
 use seed::log;
 use seed::prelude::{fetch, Method, Node, Orders, Request};
 use serde::{Deserialize, Serialize};
@@ -102,6 +102,8 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 }
 
 async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<String> {
+    let game_request: ProtobufResult<GameRequest> = Message::parse_from_bytes([]);
+    // GameRequest::merge_from_bytes()
     Request::new(url.as_str())
         .method(Method::Post)
         .text(hex::encode(bytes))
