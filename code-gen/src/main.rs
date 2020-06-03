@@ -96,7 +96,7 @@ fn spacing_function(has_side: &str, side: &str) -> String {
 
     buf.push_str(
         format!(
-            "pub fn {}(size:u8) -> &'static str {{\n",
+            "pub fn {}(size: u8) -> &'static str {{\n",
             format!("{}_{}", has_side, side),
         )
         .as_str(),
@@ -127,7 +127,7 @@ fn spacing_function(has_side: &str, side: &str) -> String {
         &mut buf,
         2,
         format!(
-            "_ => {}_{}_0",
+            "_ => {}_{}_0,",
             has_side.to_ascii_uppercase(),
             side.to_ascii_uppercase()
         )
