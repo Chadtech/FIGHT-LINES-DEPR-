@@ -5,6 +5,7 @@ use std::sync::Mutex;
 use crate::domain::game;
 use crate::domain::model::FormData;
 use crate::domain::model::Model;
+use protobuf::ProtobufResult;
 
 /// Responder Objects
 /// GET /
@@ -27,8 +28,14 @@ pub async fn game_count(model: web::Data<Model>) -> impl Responder {
 pub async fn post_game(mut body: String, model: web::Data<Mutex<Model>>) -> impl Responder {
     // let mut data = model.lock().unwrap();
     // data.add_game(game::init(&form.game_name));
-    let payload = hex::decode(body);
-    // let game_r = GameRequest::parse_from_bytes(payload);
+    let mut gameX = GameRequest::new();
+    match hex::decode(body) {
+        Ok(payload) => {
+            let game_request: GameRequest = gameX::parse_from_bytes(payload);
+        }
+        Err(_) => {}
+    }
+    // let game_r = gameX::merge_from_bytes(payload);
     println!("Body {:?}!", payload);
     "Hello from POST Request"
 }
