@@ -101,14 +101,14 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     }
 }
 
-async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<Response> {
+async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<String> {
     Request::new(url.as_str())
         .method(Method::Post)
         .text(hex::encode(bytes))
         .fetch()
         .await?
         .check_status()?
-        .json()
+        .text()
         .await
 }
 

@@ -24,17 +24,11 @@ pub async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-pub async fn post_game(
-    // form: web::Form<FormData>,
-    model: web::Data<Mutex<Model>>,
-) -> impl Responder {
+pub async fn post_game(data: web::Bytes, model: web::Data<Mutex<Model>>) -> impl Responder {
     // let mut data = model.lock().unwrap();
+
     // data.add_game(game::init(&form.game_name));
-    // HttpResponse::Ok().body(format!(
-    //     "Game Name: {}, Num_Players: {}",
-    //     form.game_name, form.num_players
-    // ))
-    HttpResponse::Ok()
+    "Hello from POST Request"
 }
 
 pub async fn proto_test() -> impl Responder {
