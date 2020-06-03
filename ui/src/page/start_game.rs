@@ -67,7 +67,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::StartClicked => {
             let mut game_request = GameRequest::new();
 
-            game_request.set_gameName("Barney's Big Game".to_string());
+            game_request.set_gameName(model.game_name_field.clone());
 
             let url = model.get_session().url("/game/create");
 
@@ -77,7 +77,10 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                         async {
                             let response = match send_message(url, bytes).await {
                                 Ok(_) => Response::Yep,
-                                Err(_) => Response::Nope,
+                                Err(err) => {
+                                    log!(err);
+                                    Response::Nope
+                                }
                             };
                             Msg::NewGameResponse(response)
                         }
