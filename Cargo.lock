@@ -1629,6 +1629,7 @@ dependencies = [
  "code-gen",
  "env_logger",
  "fightlines_moves",
+ "hex",
  "protobuf",
  "rand 0.3.23",
  "serde",
