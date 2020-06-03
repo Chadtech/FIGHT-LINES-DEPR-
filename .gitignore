@@ -5,3 +5,4 @@ server-actix/target
 target
 dev-css/target
 
+code-gen/src/protos/logic.rs

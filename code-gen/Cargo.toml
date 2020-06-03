@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 indoc = "0.3"
+protobuf-codegen-pure = "2.3"
+protobuf = "2"
+serde = "1.0.111"

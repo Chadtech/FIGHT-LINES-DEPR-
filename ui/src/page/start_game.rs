@@ -1,8 +1,13 @@
+use crate::session::Session;
 use crate::view::button::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
-use seed::prelude::Node;
+use code_gen::protos::game_request::GameRequest;
+use protobuf::Message;
+use seed::log;
+use seed::prelude::{fetch, Method, Node, Orders, Request};
+use serde::{Deserialize, Serialize};
 
 ////////////////////////////////////////////////////////////////
 // TYPES //
@@ -11,6 +16,7 @@ use seed::prelude::Node;
 pub struct Model {
     game_name_field: String,
     player_name_field: String,
+    session: Session,
 }
 
 #[derive(Clone)]
@@ -18,9 +24,19 @@ pub enum Msg {
     StartClicked,
     GameNameFieldUpdated(String),
     PlayerNameFieldUpdated(String),
+    NewGameResponse(Response),
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum Response {
+    Yep,
+    Nope,
 }
 
 impl Model {
+    pub fn get_session(&self) -> Session {
+        self.session
+    }
     pub fn update_game_name(&mut self, new_name: String) {
         self.game_name_field = new_name;
     }
@@ -34,10 +50,11 @@ impl Model {
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init() -> Model {
+pub fn init(session: Session) -> Model {
     Model {
         game_name_field: String::new(),
         player_name_field: String::new(),
+        session,
     }
 }
 
@@ -45,10 +62,32 @@ pub fn init() -> Model {
 // UPDATE //
 ////////////////////////////////////////////////////////////////
 
-pub fn update(msg: Msg, model: &mut Model) {
+pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::StartClicked => {
-            // ????? Send http request!!!!
+            let mut game_request = GameRequest::new();
+
+            game_request.set_gameName(model.game_name_field.clone());
+
+            let url = model.get_session().url("/game/create");
+
+            match game_request.write_to_bytes() {
+                Ok(bytes) => {
+                    orders.skip().perform_cmd({
+                        async {
+                            let response = match send_message(url, bytes).await {
+                                Ok(_) => Response::Yep,
+                                Err(err) => {
+                                    log!(err);
+                                    Response::Nope
+                                }
+                            };
+                            Msg::NewGameResponse(response)
+                        }
+                    });
+                }
+                Err(_) => {}
+            }
         }
         Msg::GameNameFieldUpdated(new_field) => {
             model.update_game_name(new_field);
@@ -56,7 +95,21 @@ pub fn update(msg: Msg, model: &mut Model) {
         Msg::PlayerNameFieldUpdated(new_field) => {
             model.update_player_name(new_field);
         }
+        Msg::NewGameResponse(response) => {
+            log!(response);
+        }
     }
+}
+
+async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<String> {
+    Request::new(url.as_str())
+        .method(Method::Post)
+        .text(hex::encode(bytes))
+        .fetch()
+        .await?
+        .check_status()?
+        .text()
+        .await
 }
 
 ////////////////////////////////////////////////////////////////

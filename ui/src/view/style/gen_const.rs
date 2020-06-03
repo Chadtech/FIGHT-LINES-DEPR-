@@ -69,7 +69,7 @@ pub static MARGIN_LEFT_7: &'static str = "margin-left-7";
 pub static PADDING_LEFT_7: &'static str = "padding-left-7";
 pub static MARGIN_RIGHT_7: &'static str = "margin-right-7";
 pub static PADDING_RIGHT_7: &'static str = "padding-right-7";
-pub fn margin_top(size:u8) -> &'static str {
+pub fn margin_top(size: u8) -> &'static str {
     match size {
         0 => MARGIN_TOP_0,
         1 => MARGIN_TOP_1,
@@ -79,10 +79,10 @@ pub fn margin_top(size:u8) -> &'static str {
         5 => MARGIN_TOP_5,
         6 => MARGIN_TOP_6,
         7 => MARGIN_TOP_7,
-        _ => MARGIN_TOP_0
+        _ => MARGIN_TOP_0,
     }
 }
-pub fn padding_top(size:u8) -> &'static str {
+pub fn padding_top(size: u8) -> &'static str {
     match size {
         0 => PADDING_TOP_0,
         1 => PADDING_TOP_1,
@@ -92,10 +92,10 @@ pub fn padding_top(size:u8) -> &'static str {
         5 => PADDING_TOP_5,
         6 => PADDING_TOP_6,
         7 => PADDING_TOP_7,
-        _ => PADDING_TOP_0
+        _ => PADDING_TOP_0,
     }
 }
-pub fn margin_bottom(size:u8) -> &'static str {
+pub fn margin_bottom(size: u8) -> &'static str {
     match size {
         0 => MARGIN_BOTTOM_0,
         1 => MARGIN_BOTTOM_1,
@@ -105,10 +105,10 @@ pub fn margin_bottom(size:u8) -> &'static str {
         5 => MARGIN_BOTTOM_5,
         6 => MARGIN_BOTTOM_6,
         7 => MARGIN_BOTTOM_7,
-        _ => MARGIN_BOTTOM_0
+        _ => MARGIN_BOTTOM_0,
     }
 }
-pub fn padding_bottom(size:u8) -> &'static str {
+pub fn padding_bottom(size: u8) -> &'static str {
     match size {
         0 => PADDING_BOTTOM_0,
         1 => PADDING_BOTTOM_1,
@@ -118,10 +118,10 @@ pub fn padding_bottom(size:u8) -> &'static str {
         5 => PADDING_BOTTOM_5,
         6 => PADDING_BOTTOM_6,
         7 => PADDING_BOTTOM_7,
-        _ => PADDING_BOTTOM_0
+        _ => PADDING_BOTTOM_0,
     }
 }
-pub fn margin_left(size:u8) -> &'static str {
+pub fn margin_left(size: u8) -> &'static str {
     match size {
         0 => MARGIN_LEFT_0,
         1 => MARGIN_LEFT_1,
@@ -131,10 +131,10 @@ pub fn margin_left(size:u8) -> &'static str {
         5 => MARGIN_LEFT_5,
         6 => MARGIN_LEFT_6,
         7 => MARGIN_LEFT_7,
-        _ => MARGIN_LEFT_0
+        _ => MARGIN_LEFT_0,
     }
 }
-pub fn padding_left(size:u8) -> &'static str {
+pub fn padding_left(size: u8) -> &'static str {
     match size {
         0 => PADDING_LEFT_0,
         1 => PADDING_LEFT_1,
@@ -144,10 +144,10 @@ pub fn padding_left(size:u8) -> &'static str {
         5 => PADDING_LEFT_5,
         6 => PADDING_LEFT_6,
         7 => PADDING_LEFT_7,
-        _ => PADDING_LEFT_0
+        _ => PADDING_LEFT_0,
     }
 }
-pub fn margin_right(size:u8) -> &'static str {
+pub fn margin_right(size: u8) -> &'static str {
     match size {
         0 => MARGIN_RIGHT_0,
         1 => MARGIN_RIGHT_1,
@@ -157,10 +157,10 @@ pub fn margin_right(size:u8) -> &'static str {
         5 => MARGIN_RIGHT_5,
         6 => MARGIN_RIGHT_6,
         7 => MARGIN_RIGHT_7,
-        _ => MARGIN_RIGHT_0
+        _ => MARGIN_RIGHT_0,
     }
 }
-pub fn padding_right(size:u8) -> &'static str {
+pub fn padding_right(size: u8) -> &'static str {
     match size {
         0 => PADDING_RIGHT_0,
         1 => PADDING_RIGHT_1,
@@ -170,6 +170,6 @@ pub fn padding_right(size:u8) -> &'static str {
         5 => PADDING_RIGHT_5,
         6 => PADDING_RIGHT_6,
         7 => PADDING_RIGHT_7,
-        _ => PADDING_RIGHT_0
+        _ => PADDING_RIGHT_0,
     }
 }

@@ -20,3 +20,10 @@ cargo run
 ```
 
 Then the ui will be available at `localhost:8000`, and the server will be available at `localhost:2943`.
+
+### ProtoBuf Implementation
+You need protobuf added to your system path
+
+download : https://github.com/protocolbuffers/protobuf/releases/download/v3.12.1/protoc-3.12.1-linux-x86_64.zip 
+copy the `protoc` binary in the `bin` directory and copy it to `.cargo/bin`
+

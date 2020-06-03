@@ -1,7 +1,5 @@
-use crate::route::Route;
 use crate::view::grid::cell;
 
-use crate::view::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use seed::{prelude::*, *};
@@ -10,33 +8,47 @@ use seed::{prelude::*, *};
 // TYPES //
 ////////////////////////////////////////////////////////////////
 
-pub struct Model {
-    clicked: bool,
+pub struct Form {
+    game_name: String,
+    num_players: i64,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub enum Msg {
-    StartClicked,
+    FormSubmitted,
+    GameNameChanged(String),
+    NumPlayersChanged(String),
 }
 
 ////////////////////////////////////////////////////////////////
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init() -> Model {
-    Model { clicked: false }
+pub fn init() -> Form {
+    Form {
+        game_name: "".to_string(),
+        num_players: 0,
+    }
 }
 
 ////////////////////////////////////////////////////////////////
 // UPDATE //
 ////////////////////////////////////////////////////////////////
 
-pub fn update(msg: Msg, model: &mut Model) {
+pub fn update(msg: Msg, form: &mut Form) {
     match msg {
-        Msg::StartClicked => {
-            println!("World at work");
-            model.clicked = true;
+        Msg::FormSubmitted => {
+            // requests::new("/game/create")
+            //     .method(Method::Post)
+            //     .send_json(&form.to_encoder());
+            log![
+                "Data Submitted to the console",
+                form.game_name,
+                form.num_players
+            ];
         }
+        Msg::GameNameChanged(field) => form.game_name = field,
+        Msg::NumPlayersChanged(field) => form.num_players = field.parse().unwrap(),
     }
 }
 
@@ -44,37 +56,50 @@ pub fn update(msg: Msg, model: &mut Model) {
 // VIEW //
 ////////////////////////////////////////////////////////////////
 
-pub fn view(model: &Model) -> Vec<Node<Msg>> {
+pub fn view(model: &Form) -> Vec<Node<Msg>> {
     row::many(vec![
         row::single(text("Demo Page")),
-        row::single(button::button("Demo Start Button", |_| Msg::StartClicked).view()),
-        row::single(go_view(model.clicked)),
         row::single(h1!["The Grand Total"]),
-        row::row(vec![
-            cell::single(label!["Game Name: "]),
-            cell::single(input![attrs! {
-                At::Placeholder => "Name of Game"
-            }]),
-        ]),
-        row::row(vec![
-            cell::single(label!["Number Players: ",]),
-            cell::single(input![attrs! {
-                At::Placeholder => "3"
-                At::Type => "number"
-            }]),
-        ]),
-        row::single(button::route("Submit", Route::StartGame).view()),
+        row::row(vec![cell::single(view_form(model))]),
     ])
     .map_rows(|row| row.center(true))
     .view()
 }
 
-fn go_view(go: bool) -> Node<Msg> {
-    let content = if go {
-        "YOU ARE NOW PLAYING FIGHT LINES!!!"
-    } else {
-        ""
-    };
-
-    text(content)
+fn view_form(_form: &Form) -> Node<Msg> {
+    form![
+        attrs! {
+            At::Method => "POST"
+            At::Action => "//localhost:2943/game/create"
+        },
+        ev(Ev::Submit, |_| {
+            // event.prevent_default();
+            Msg::FormSubmitted
+        }),
+        fieldset![
+            label!["Game Name: "],
+            input![
+                attrs! {
+                        At::Type => "text"
+                        At::Placeholder => "Name of Game"
+                },
+                input_ev(Ev::Input, |new_value| Msg::GameNameChanged(new_value))
+            ]
+        ],
+        br![],
+        br![],
+        fieldset![
+            label!["Number Players: "],
+            input![
+                attrs! {
+                    At::Type => "number"
+                    At::Placeholder => "3"
+                    At::Type => "number"
+                },
+                input_ev(Ev::Input, |new_value| Msg::NumPlayersChanged(new_value))
+            ],
+        ],
+        br![],
+        button!["Submit"],
+    ]
 }
