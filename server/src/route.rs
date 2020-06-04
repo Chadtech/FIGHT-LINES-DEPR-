@@ -3,9 +3,8 @@ use code_gen::protos::game_request::GameRequest;
 use std::sync::Mutex;
 
 use crate::domain::game;
-use crate::domain::model::FormData;
 use crate::domain::model::Model;
-use protobuf::ProtobufResult;
+use protobuf::{parse_from_bytes, ProtobufResult};
 
 /// Responder Objects
 /// GET /
@@ -25,16 +24,26 @@ pub async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-pub async fn post_game(mut body: String, model: web::Data<Mutex<Model>>) -> impl Responder {
-    // let mut data = model.lock().unwrap();
-    // data.add_game(game::init(&form.game_name));
-    let mut gameX = GameRequest::new();
+pub async fn post_game(body: String, model: web::Data<Mutex<Model>>) -> impl Responder {
+    // Decode the hex message from the server
+    // hex decode returns a Result type, needs to match
     match hex::decode(body) {
-        Ok(payload) => println!("Body {:?}!", payload),
+        Ok(payload) => {
+            // Create protobuf Result type from parse_from_bytes
+            let result: ProtobufResult<GameRequest> = parse_from_bytes(&payload);
+
+            match result {
+                Ok(output) => {
+                    // unlock mutex to add new Game Object
+                    let mut data = model.lock().unwrap();
+                    data.add_game(game::init(&output.gameName.to_string()));
+                }
+                Err(_) => {}
+            }
+        }
         Err(_) => {}
     }
-    // let game_r = gameX::merge_from_bytes(payload);
-    "Hello from POST Request"
+    "Hello from POST"
 }
 
 pub async fn proto_test() -> impl Responder {

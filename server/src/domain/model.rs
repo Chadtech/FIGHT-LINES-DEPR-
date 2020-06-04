@@ -1,6 +1,5 @@
 use super::game::Game;
 use rand::{Rng, SeedableRng, StdRng};
-use serde::Deserialize;
 use std::collections::HashMap;
 ////////////////////////////////////////////////////////////////
 // Types //
@@ -68,12 +67,6 @@ impl Model {
     }
 }
 
-#[derive(Deserialize)]
-pub struct FormData {
-    pub game_name: String,
-    pub num_players: i64,
-}
-
 ////////////////////////////////////////////////////////////////
 // Tests //
 ////////////////////////////////////////////////////////////////
@@ -97,10 +90,8 @@ mod model_tests {
 
     #[test]
     fn using_the_seed_changes_it() {
-        let mut test_model_0 = init_test_model();
-        let mut test_model_1 = init_test_model();
-
-        let _rng = test_model_0.get_rng();
+        let test_model_0 = init_test_model();
+        let test_model_1 = init_test_model();
 
         assert_ne!(test_model_0.randomness_seed, test_model_1.randomness_seed)
     }
