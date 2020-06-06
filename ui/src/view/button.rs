@@ -56,6 +56,7 @@ where
 
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed(tag)));
 
+        element.add_class("button");
         element.children.push(text(self.label.as_str()));
 
         match self.on_click {

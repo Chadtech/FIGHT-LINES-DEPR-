@@ -1,19 +1,24 @@
 extern crate protobuf_codegen_pure;
 
 use indoc::indoc;
-use std::fs::File;
-use std::io::Write;
+use notify::{watcher, RecursiveMode, Watcher};
+use std::ffi::OsStr;
+use std::fs;
+use std::fs::{DirEntry, File, FileType};
+use std::io::{Error, Write};
+use std::sync::mpsc::channel;
+use std::time::Duration;
 
 fn main() -> std::io::Result<()> {
     //
     // CSS
     //
 
-    let mut css_file = File::create("../ui/src/view/style/gen.css")?;
-    css_file.write_all(css().as_bytes())?;
+    let mut generated_css_file = File::create("../ui/src/view/style/gen.css")?;
+    generated_css_file.write_all(css().as_bytes())?;
 
-    let mut style_constants_file = File::create("../ui/src/view/style/gen_const.rs")?;
-    style_constants_file.write_all(style_constants().as_bytes())?;
+    let mut style_constants_code = File::create("../ui/src/view/style/gen_const.rs")?;
+    style_constants_code.write_all(style_constants().as_bytes())?;
 
     //
     // PROTOBUF
@@ -30,7 +35,80 @@ fn main() -> std::io::Result<()> {
     })
     .expect("protoc");
 
-    Ok(())
+    //
+    // CONCAT CSS
+    //
+
+    concat_all_css()?;
+    // Create a channel to receive the events.
+    let (sender, receiver) = channel();
+
+    // Create a watcher object, delivering debounced events.
+    // The notification back-end is selected based on the platform.
+    let mut watcher = watcher(sender, Duration::from_secs(10)).unwrap();
+
+    // Add a path to be watched. All files and directories at that path and
+    // below will be monitored for changes.
+    watcher
+        .watch("../ui/src/view", RecursiveMode::Recursive)
+        .unwrap();
+
+    loop {
+        match receiver.recv() {
+            Ok(event) => {
+                println!("{:?}", event);
+                concat_all_css()?;
+            }
+            Err(e) => println!("watch error: {:?}", e),
+        }
+    }
+}
+
+fn concat_all_css() -> std::io::Result<()> {
+    let mut concatenated_css = String::new();
+    read_and_concat_path("../ui/src", &mut concatenated_css);
+
+    let mut main_css_file = File::create("../ui/style.css")?;
+    main_css_file.write_all(concatenated_css.as_bytes())
+}
+
+fn read_and_concat_path(path: &str, buf: &mut String) {
+    let dir = fs::read_dir(path).unwrap();
+
+    for dir_item_read_result in dir {
+        match dir_item_read_result {
+            Ok(dir_item) => {
+                let path = dir_item.path();
+
+                match path.to_str() {
+                    None => {
+                        panic!("Cannot turn the path into a string");
+                    }
+                    Some(entry_path) => {
+                        let extension = path.extension().and_then(OsStr::to_str);
+                        if extension == Some("css") {
+                            match fs::read_to_string(entry_path) {
+                                Ok(file_content) => {
+                                    buf.push_str("\n\n");
+                                    buf.push_str(file_content.as_str());
+                                }
+                                Err(file_read_error) => {
+                                    panic!(file_read_error);
+                                }
+                            }
+                        }
+
+                        if path.is_dir() {
+                            read_and_concat_path(entry_path, buf);
+                        }
+                    }
+                }
+            }
+            Err(error) => {
+                panic!(error);
+            }
+        }
+    }
 }
 
 static MAX_STYLE_SIZE: u8 = 8;
