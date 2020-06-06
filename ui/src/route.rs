@@ -4,11 +4,12 @@ use seed::Url;
 // TYPES //
 ////////////////////////////////////////////////////////////////
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub enum Route {
     Title,
     StartGame,
     Demo,
+    Lobby(String),
 }
 
 ////////////////////////////////////////////////////////////////
@@ -21,6 +22,7 @@ impl Route {
             Route::Title => vec![],
             Route::StartGame => vec!["start-game"],
             Route::Demo => vec!["demo"],
+            Route::Lobby(game_id) => vec!["game", game_id.as_str(), "lobby"],
         }
     }
     pub fn to_string(self) -> String {
