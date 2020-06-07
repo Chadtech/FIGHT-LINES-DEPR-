@@ -68,7 +68,7 @@ fn concat_all_css() -> std::io::Result<()> {
     let mut concatenated_css = String::new();
     read_and_concat_path("../ui/src", &mut concatenated_css);
 
-    let mut main_css_file = File::create("../ui/style.css")?;
+    let mut main_css_file = File::create("../ui/assets/style.css")?;
     main_css_file.write_all(concatenated_css.as_bytes())
 }
 

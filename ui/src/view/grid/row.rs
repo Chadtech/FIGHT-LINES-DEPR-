@@ -37,7 +37,10 @@ pub fn many<MSG>(rows: Vec<Row<MSG>>) -> Many<MSG> {
     Many { rows }
 }
 
-impl<T> Row<T> {
+impl<T> Row<T>
+where
+    T: 'static,
+{
     pub fn view(self) -> Node<T> {
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("row")));
 
@@ -45,8 +48,6 @@ impl<T> Row<T> {
             let center_class = "center";
             element.add_class(center_class);
         }
-
-        style::apply(vec![style::padding(4)], &mut element);
 
         element.children = self.cells.into_iter().map(|cell| cell.view()).collect();
         Node::Element(element)
@@ -58,7 +59,10 @@ impl<T> Row<T> {
     }
 }
 
-impl<T> Many<T> {
+impl<T> Many<T>
+where
+    T: 'static,
+{
     pub fn view(self) -> Vec<Node<T>> {
         self.rows.into_iter().map(|row| row.view()).collect()
     }
