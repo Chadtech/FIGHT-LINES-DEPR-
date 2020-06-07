@@ -1,6 +1,6 @@
 use actix_files::Files;
 use actix_web::HttpServer;
-use actix_web::{http, middleware, web, App};
+use actix_web::{middleware, web, App};
 use std::io;
 use std::sync::Mutex;
 
@@ -9,7 +9,6 @@ use server::route;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
-    use actix_cors::Cors;
     use env_logger::Env;
     use middleware::Logger;
 
@@ -21,14 +20,6 @@ async fn main() -> io::Result<()> {
             .app_data(global_state.clone())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
-            // .wrap(
-            //     Cors::new()
-            //         .allowed_origin("http://localhost:8000")
-            //         .allowed_methods(vec!["GET", "POST"])
-            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-            //         .allowed_header(http::header::CONTENT_TYPE)
-            //         .finish(),
-            // )
             .route("/again", web::get().to(route::index2))
             .route("/games/count", web::get().to(route::game_count))
             .route("/game/create", web::post().to(route::post_game))
