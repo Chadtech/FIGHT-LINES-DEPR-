@@ -33,7 +33,6 @@ async fn main() -> io::Result<()> {
             .route("/again", web::get().to(route::index2))
             .route("/games/count", web::get().to(route::game_count))
             .route("/game/create", web::post().to(route::post_game))
-            .route("/game/resp", web::get().to(route::proto_test))
             .service(Files::new("/game", "./static").index_file("index.html"))
     })
     .bind("127.0.0.1:2943")?

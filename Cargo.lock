@@ -496,6 +496,7 @@ dependencies = [
 name = "code-gen"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "indoc",
  "protobuf",
  "protobuf-codegen-pure",

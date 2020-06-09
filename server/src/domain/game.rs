@@ -17,9 +17,9 @@ pub struct Game {
 /// The parameters for this should be
 /// all the things needed to make
 /// a new game, but nothing else
-pub fn init(name: &str) -> Game {
+pub fn init(name: String) -> Game {
     Game {
-        name: name.to_string(),
+        name: name,
         players: Vec::new(),
         round: 0,
     }

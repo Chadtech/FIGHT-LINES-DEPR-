@@ -1,10 +1,9 @@
 use actix_web::{web, HttpResponse, Responder};
-use code_gen::protos::game_request::GameRequest;
+use code_gen::store::GameRequest;
 use std::sync::Mutex;
 
 use crate::domain::game;
 use crate::domain::model::Model;
-use protobuf::{parse_from_bytes, ProtobufResult};
 
 /// Responder Objects
 /// GET /
@@ -30,25 +29,11 @@ pub async fn post_game(body: String, model: web::Data<Mutex<Model>>) -> impl Res
     match hex::decode(body) {
         Ok(payload) => {
             // Create protobuf Result type from parse_from_bytes
-            let result: ProtobufResult<GameRequest> = parse_from_bytes(&payload);
-
-            match result {
-                Ok(output) => {
-                    // unlock mutex to add new Game Object
-                    let mut data = model.lock().unwrap();
-                    data.add_game(game::init(&output.gameName.to_string()));
-                }
-                Err(_) => {}
-            }
+            let result: GameRequest = GameRequest::obj_from_bytes(payload);
+            let mut data = model.lock().unwrap();
+            data.add_game(game::init(result.game_name().to_string()));
         }
         Err(_) => {}
     }
     "Hello from POST"
-}
-
-pub async fn proto_test() -> impl Responder {
-    let mut out_response = GameRequest::new();
-    out_response.set_gameName("Response Game".to_string());
-    out_response.set_numPlayers(55);
-    HttpResponse::Ok().body(out_response.take_gameName())
 }
