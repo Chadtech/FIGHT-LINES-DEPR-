@@ -17,13 +17,16 @@ enum Model {
     Title(Session),
     StartGame(page::start_game::Model),
     Demo(Session, page::demo::Form),
+    Lobby(page::lobby::Model),
+    Game(page::game::Model),
 }
 
-#[derive(Clone)]
 enum Msg {
     RouteChanged(Option<Route>),
     StartGameMsg(page::start_game::Msg),
     DemoMsg(page::demo::Msg),
+    LobbyMsg(page::lobby::Msg),
+    GameMsg(page::game::Msg),
 }
 ////////////////////////////////////////////////////////////////
 // PRIVATE HELPERS //
@@ -36,6 +39,8 @@ impl Model {
             Model::Title(session) => *session,
             Model::StartGame(sub_model) => sub_model.get_session(),
             Model::Demo(session, _) => *session,
+            Model::Lobby(sub_model) => sub_model.get_session(),
+            Model::Game(sub_model) => sub_model.get_session(),
         }
     }
 }
@@ -78,6 +83,16 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 page::demo::update(sub_msg, sub_model)
             }
         }
+        Msg::LobbyMsg(sub_msg) => {
+            if let Model::Lobby(sub_model) = model {
+                page::lobby::update(sub_msg, sub_model)
+            }
+        }
+        Msg::GameMsg(sub_msg) => {
+            if let Model::Game(sub_model) = model {
+                page::game::update(sub_msg, sub_model)
+            }
+        }
     }
 }
 
@@ -98,6 +113,22 @@ fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
                 Model::Demo(_, _) => {}
                 _ => *model = Model::Demo(session, page::demo::init()),
             },
+            Route::Lobby(game_id) => match model {
+                Model::Lobby(sub_model) => {
+                    if sub_model.get_game_id() != game_id {
+                        *model = Model::Lobby(page::lobby::init(session, game_id))
+                    }
+                }
+                _ => *model = Model::Lobby(page::lobby::init(session, game_id)),
+            },
+            Route::Game(game_id) => match model {
+                Model::Game(sub_model) => {
+                    if sub_model.get_game_id() != game_id {
+                        *model = Model::Game(page::game::init(session, game_id))
+                    }
+                }
+                _ => *model = Model::Game(page::game::init(session, game_id)),
+            },
         },
     }
 }
@@ -117,6 +148,14 @@ fn view(model: &Model) -> Node<Msg> {
         Model::Demo(_, sub_model) => page::demo::view(sub_model)
             .into_iter()
             .map(|node| node.map_msg(Msg::DemoMsg))
+            .collect(),
+        Model::Lobby(sub_model) => page::lobby::view(sub_model)
+            .into_iter()
+            .map(|node| node.map_msg(Msg::LobbyMsg))
+            .collect(),
+        Model::Game(sub_model) => page::game::view(sub_model)
+            .into_iter()
+            .map(|node| node.map_msg(Msg::GameMsg))
             .collect(),
     };
 

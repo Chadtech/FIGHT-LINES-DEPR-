@@ -283,14 +283,26 @@ body {
     --size-5: 32px;
 }
 
-row {
-    display: flex;
-}
-
 .center {
     justify-content: center;
 }
 
 .button {
     padding: 50px;
+}
+
+row {
+    display: flex;
+}
+
+.sprite {
+    width: 48px;
+    height: 48px;
+}
+
+
+
+cell {
+    display: flex;
+    position: relative;
 }

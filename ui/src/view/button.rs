@@ -1,5 +1,4 @@
 use crate::route;
-use crate::view::button::Click::{Handler, Route};
 use crate::view::text::text;
 use seed::dom_entity_names::Tag;
 use seed::prelude::*;
@@ -32,26 +31,25 @@ pub fn button<MSG>(
 ) -> Button<MSG> {
     Button {
         label: label.to_string(),
-        on_click: Handler(Rc::new(move |event| on_click.clone()(event))),
+        on_click: Click::Handler(Rc::new(move |event| on_click.clone()(event))),
     }
 }
 
 pub fn route<MSG>(label: &str, route: route::Route) -> Button<MSG> {
     Button {
         label: label.to_string(),
-        on_click: Route(route),
+        on_click: Click::Route(route),
     }
 }
 
 impl<T> Button<T>
 where
-    T: Clone,
     T: 'static,
 {
     pub fn view(self) -> Node<T> {
         let tag = match self.on_click {
-            Handler(_) => "button",
-            Route(_) => "a",
+            Click::Handler(_) => "button",
+            Click::Route(_) => "a",
         };
 
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed(tag)));
@@ -60,10 +58,10 @@ where
         element.children.push(text(self.label.as_str()));
 
         match self.on_click {
-            Handler(on_click) => {
+            Click::Handler(on_click) => {
                 element.add_event_handler(mouse_ev(Ev::Click, move |event| on_click(event)));
             }
-            Route(route) => {
+            Click::Route(route) => {
                 element.add_attr(Cow::Borrowed("href"), route.to_string());
             }
         }
