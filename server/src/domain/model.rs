@@ -33,12 +33,13 @@ impl Model {
     pub fn random_seed(&self) -> usize {
         self.randomness_seed
     }
-    pub fn add_game(&mut self, new_game: Game) {
+    pub fn add_game(&mut self, new_game: Game) -> u64 {
         let mut rng = self.get_rng();
 
         let id: u64 = rng.gen();
 
         self.games.insert(id, new_game);
+        id
     }
 
     fn set_seed(&mut self, randomness_seed: usize) {
