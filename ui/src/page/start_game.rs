@@ -4,7 +4,6 @@ use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
 use code_gen::store::GameRequest;
-use protobuf::Message;
 use seed::log;
 use seed::prelude::{fetch, Method, Node, Orders, Request};
 use serde::{Deserialize, Serialize};

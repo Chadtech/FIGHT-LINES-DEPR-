@@ -30,7 +30,7 @@ pub async fn post_game(body: String, model: web::Data<Mutex<Model>>) -> impl Res
     match hex::decode(body) {
         Ok(payload) => {
             // Create protobuf Result type from parse_from_bytes
-            let result: GameRequest = GameRequest::obj_from_bytes(payload);
+            let result: GameRequest = GameRequest::from_bytes(payload);
             let mut data = model.lock().unwrap();
             let game_id: u64 = data.add_game(game::init(result.game_name().to_string()));
             response = format!("Hello from POST {:?}", game_id)

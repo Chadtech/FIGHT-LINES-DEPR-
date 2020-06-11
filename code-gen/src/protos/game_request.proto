@@ -1,6 +1,0 @@
-syntax = "proto3";
-
-message GameRequest{
-    string gameName = 1;
-    int32  numPlayers = 2;
-}
