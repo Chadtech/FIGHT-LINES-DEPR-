@@ -61,7 +61,7 @@ mod game_test {
     use crate::domain::game::Game;
 
     fn init_game_obj() -> Game {
-        game::init("Hello World")
+        game::init("Hello World".to_string())
     }
     #[test]
     fn update_name() {

@@ -84,15 +84,17 @@ mod model_tests {
     fn add_game_increases_game_count() {
         let mut test_model = init_test_model();
 
-        test_model.add_game(game::init(&"test game"));
+        test_model.add_game(game::init("test game".to_string()));
 
         assert_eq!(test_model.games_count(), 1);
     }
 
     #[test]
     fn using_the_seed_changes_it() {
-        let test_model_0 = init_test_model();
+        let mut test_model_0 = init_test_model();
         let test_model_1 = init_test_model();
+
+        let _rng = test_model_0.get_rng();
 
         assert_ne!(test_model_0.randomness_seed, test_model_1.randomness_seed)
     }
