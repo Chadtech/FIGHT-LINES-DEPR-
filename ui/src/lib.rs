@@ -23,6 +23,7 @@ enum Model {
 
 enum Msg {
     RouteChanged(Option<Route>),
+    Rendered(RenderInfo),
     StartGame(page::start_game::Msg),
     Demo(page::demo::Msg),
     Lobby(page::lobby::Msg),
@@ -33,14 +34,14 @@ enum Msg {
 ////////////////////////////////////////////////////////////////
 
 impl Model {
-    pub fn get_session(&mut self) -> Session {
-        match &self {
-            Model::PageNotFound(session) => *session,
-            Model::Title(session) => *session,
-            Model::StartGame(sub_model) => sub_model.get_session(),
-            Model::Demo(session, _) => *session,
-            Model::Lobby(sub_model) => sub_model.get_session(),
-            Model::Game(sub_model) => sub_model.get_session(),
+    pub fn get_session_mut(&mut self) -> &mut Session {
+        match self {
+            Model::StartGame(sub_model) => sub_model.get_session_mut(),
+            Model::PageNotFound(session) => session,
+            Model::Title(session) => session,
+            Model::Demo(session, _) => session,
+            Model::Lobby(sub_model) => sub_model.get_session_mut(),
+            Model::Game(sub_model) => sub_model.get_session_mut(),
         }
     }
 }
@@ -55,6 +56,8 @@ fn before_mount(_: Url) -> BeforeMount {
 
 fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     orders.send_msg(Msg::RouteChanged(route::parse(url)));
+
+    orders.after_next_render(Msg::Rendered);
 
     // TODO we need some kind of logic to determine
     // if we should use `init_dev()`, because in some
@@ -72,6 +75,11 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::RouteChanged(maybe_route) => {
             handle_route(maybe_route, model);
+        }
+        Msg::Rendered(render_info) => {
+            model
+                .get_session_mut()
+                .set_current_time(render_info.timestamp);
         }
         Msg::StartGame(sub_msg) => {
             if let Model::StartGame(sub_model) = model {
@@ -94,10 +102,12 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             }
         }
     }
+
+    orders.after_next_render(Msg::Rendered);
 }
 
 fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
-    let session = model.get_session();
+    let session = *model.get_session_mut();
     match maybe_route {
         None => *model = Model::PageNotFound(session),
         Some(route) => match route {

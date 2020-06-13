@@ -33,8 +33,8 @@ pub enum Response {
 }
 
 impl Model {
-    pub fn get_session(&self) -> Session {
-        self.session
+    pub fn get_session_mut(&mut self) -> &mut Session {
+        &mut self.session
     }
     pub fn update_game_name(&mut self, new_name: String) {
         self.game_name_field = new_name;
@@ -66,7 +66,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::StartClicked => {
             let game_request = GameRequest::init(model.game_name_field.clone());
 
-            let url = model.get_session().url("/game/create");
+            let url = model.get_session_mut().url("/game/create");
 
             let byte_data = game_request.get_bytes_array();
             orders.skip().perform_cmd({

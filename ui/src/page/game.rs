@@ -32,6 +32,10 @@ impl Model {
         self.session
     }
 
+    pub fn get_session_mut(&mut self) -> &mut Session {
+        &mut self.session
+    }
+
     pub fn get_game_id(&self) -> String {
         self.game_id.clone()
     }
@@ -98,6 +102,11 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
 
         grass_tile_rows.push(row(grass_tile_cells));
     }
+    let timestamp_str = session.get_current_time().to_string();
+
+    let timestamp_row = row::single(text(timestamp_str.as_str()));
+
+    grass_tile_rows.push(timestamp_row);
     row::many(grass_tile_rows).view()
 }
 
