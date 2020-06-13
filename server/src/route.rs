@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Responder};
-use code_gen::store::GameRequest;
+use shared::game_request::GameRequest;
 use std::sync::Mutex;
 
 use crate::domain::game;

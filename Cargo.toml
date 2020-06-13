@@ -1,8 +1,8 @@
 [workspace]
 
 members = [
-    "moves",
     "server",
     "ui",
-    "code-gen"
+    "code-gen",
+    "shared"
 ]

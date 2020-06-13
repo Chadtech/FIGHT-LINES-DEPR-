@@ -496,10 +496,8 @@ dependencies = [
 name = "code-gen"
 version = "0.1.0"
 dependencies = [
- "bincode",
  "indoc",
  "notify",
- "serde",
 ]
 
 [[package]]
@@ -636,10 +634,6 @@ dependencies = [
  "syn",
  "synstructure",
 ]
-
-[[package]]
-name = "fightlines_moves"
-version = "0.1.0"
 
 [[package]]
 name = "filetime"
@@ -1693,12 +1687,11 @@ dependencies = [
  "actix-files",
  "actix-rt",
  "actix-web",
- "code-gen",
  "env_logger",
- "fightlines_moves",
  "hex",
  "rand 0.3.23",
  "serde",
+ "shared",
 ]
 
 [[package]]
@@ -1706,6 +1699,14 @@ name = "sha1"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2579985fda508104f7587689507983eadd6a6e84dd35d6d115361f530916fa0d"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+]
 
 [[package]]
 name = "signal-hook-registry"
@@ -1992,6 +1993,7 @@ dependencies = [
  "seed",
  "serde",
  "serde_bytes",
+ "shared",
  "wasm-bindgen-test",
 ]
 
