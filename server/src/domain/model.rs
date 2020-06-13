@@ -1,6 +1,5 @@
 use super::game::Game;
 use rand::{Rng, SeedableRng, StdRng};
-use serde::Deserialize;
 use std::collections::HashMap;
 ////////////////////////////////////////////////////////////////
 // Types //
@@ -34,12 +33,13 @@ impl Model {
     pub fn random_seed(&self) -> usize {
         self.randomness_seed
     }
-    pub fn add_game(&mut self, new_game: Game) {
+    pub fn add_game(&mut self, new_game: Game) -> u64 {
         let mut rng = self.get_rng();
 
         let id: u64 = rng.gen();
 
         self.games.insert(id, new_game);
+        id
     }
 
     fn set_seed(&mut self, randomness_seed: usize) {
@@ -68,12 +68,6 @@ impl Model {
     }
 }
 
-#[derive(Deserialize)]
-pub struct FormData {
-    pub game_name: String,
-    pub num_players: i64,
-}
-
 ////////////////////////////////////////////////////////////////
 // Tests //
 ////////////////////////////////////////////////////////////////
@@ -90,7 +84,7 @@ mod model_tests {
     fn add_game_increases_game_count() {
         let mut test_model = init_test_model();
 
-        test_model.add_game(game::init(&"test game"));
+        test_model.add_game(game::init("test game".to_string()));
 
         assert_eq!(test_model.games_count(), 1);
     }
@@ -98,7 +92,7 @@ mod model_tests {
     #[test]
     fn using_the_seed_changes_it() {
         let mut test_model_0 = init_test_model();
-        let mut test_model_1 = init_test_model();
+        let test_model_1 = init_test_model();
 
         let _rng = test_model_0.get_rng();
 

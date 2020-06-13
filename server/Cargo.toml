@@ -10,11 +10,9 @@ edition = "2018"
 actix-web = "2.0"
 actix-rt = "1.0"
 env_logger = "0.7.1"
-fightlines_moves = { path = "../moves" }
 rand = "0.3"
 actix-files = "0.2.1"
-serde="1.0"
-protobuf = "2"
-code-gen = { path = "../code-gen" }
+serde = "1.0"
+shared = { path = "../shared" }
 actix-cors = "0.2.0"
 hex = "0.4.2"

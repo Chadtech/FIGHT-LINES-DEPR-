@@ -1,5 +1,3 @@
-use fightlines_moves::moves::Move;
-
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
@@ -10,6 +8,10 @@ pub struct Player {
     /// Some(...) means they have, including the possibility that
     /// they submitted an empty list of moves.
     moves: Option<Vec<Move>>,
+}
+
+enum Move {
+    Move,
 }
 
 pub fn init(name: &str) -> Player {

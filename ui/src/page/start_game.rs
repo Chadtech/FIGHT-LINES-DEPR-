@@ -3,11 +3,10 @@ use crate::view::button::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
-use code_gen::protos::game_request::GameRequest;
-use protobuf::Message;
 use seed::log;
 use seed::prelude::{fetch, Method, Node, Orders, Request};
 use serde::{Deserialize, Serialize};
+use shared::game_request::GameRequest;
 
 ////////////////////////////////////////////////////////////////
 // TYPES //
@@ -65,29 +64,23 @@ pub fn init(session: Session) -> Model {
 pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::StartClicked => {
-            let mut game_request = GameRequest::new();
-
-            game_request.set_gameName(model.game_name_field.clone());
+            let game_request = GameRequest::init(model.game_name_field.clone());
 
             let url = model.get_session().url("/game/create");
 
-            match game_request.write_to_bytes() {
-                Ok(bytes) => {
-                    orders.skip().perform_cmd({
-                        async {
-                            let response = match send_message(url, bytes).await {
-                                Ok(_) => Response::Yep,
-                                Err(err) => {
-                                    log!(err);
-                                    Response::Nope
-                                }
-                            };
-                            Msg::NewGameResponse(response)
+            let byte_data = game_request.get_bytes_array();
+            orders.skip().perform_cmd({
+                async {
+                    let response = match send_message(url, byte_data).await {
+                        Ok(_) => Response::Yep,
+                        Err(err) => {
+                            log!(err);
+                            Response::Nope
                         }
-                    });
+                    };
+                    Msg::NewGameResponse(response)
                 }
-                Err(_) => {}
-            }
+            });
         }
         Msg::GameNameFieldUpdated(new_field) => {
             model.update_game_name(new_field);

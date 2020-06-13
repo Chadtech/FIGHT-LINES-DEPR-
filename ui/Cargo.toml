@@ -19,9 +19,10 @@ serde = { version = "1.0.111", features = ['derive'] }
 serde_bytes = "0.11"
 code-gen = { path = "../code-gen" }
 bincode = "1.2.1"
-protobuf = "2"
 futures = "^0.3.4"
 hex = "0.4.2"
+shared = { path = "../shared" }
+
 
 [profile.release]
 lto = true

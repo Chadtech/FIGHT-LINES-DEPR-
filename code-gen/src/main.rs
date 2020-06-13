@@ -1,11 +1,9 @@
-extern crate protobuf_codegen_pure;
-
 use indoc::indoc;
 use notify::{watcher, RecursiveMode, Watcher};
 use std::ffi::OsStr;
 use std::fs;
-use std::fs::{DirEntry, File, FileType};
-use std::io::{Error, Write};
+use std::fs::File;
+use std::io::Write;
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
@@ -19,21 +17,6 @@ fn main() -> std::io::Result<()> {
 
     let mut style_constants_code = File::create("../ui/src/view/style/gen_const.rs")?;
     style_constants_code.write_all(style_constants().as_bytes())?;
-
-    //
-    // PROTOBUF
-    //
-
-    protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
-        out_dir: "src/protos",
-        input: &["src/protos/game_request.proto"],
-        includes: &["src/protos"],
-        customize: protobuf_codegen_pure::Customize {
-            serde_derive: Some(true),
-            ..Default::default()
-        },
-    })
-    .expect("protoc");
 
     //
     // CONCAT CSS

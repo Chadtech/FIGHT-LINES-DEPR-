@@ -1,10 +1,9 @@
 use actix_web::{web, HttpResponse, Responder};
-use code_gen::protos::game_request::GameRequest;
+use shared::game_request::GameRequest;
 use std::sync::Mutex;
 
 use crate::domain::game;
 use crate::domain::model::Model;
-use protobuf::{parse_from_bytes, ProtobufResult};
 use std::fs;
 
 /// Responder Objects
@@ -28,24 +27,19 @@ pub async fn game_count(model: web::Data<Model>) -> impl Responder {
 
 /// POST /game/create This
 /// function will be called from a post request
-pub async fn post_game(body: String, _model: web::Data<Mutex<Model>>) -> impl Responder {
-    // let mut data = model.lock().unwrap();
-    // data.add_game(game::init(&form.game_name));
-    // let mut gameX = GameRequest::new();
+pub async fn post_game(body: String, model: web::Data<Mutex<Model>>) -> impl Responder {
+    // Decode the hex message from the server
+    // hex decode returns a Result type, needs to match
+    let mut response = String::new();
     match hex::decode(body) {
-        Ok(_payload) => {
-            // let gamex: ProtobufResult<GameRequest> = parse_from_bytes(payload);
-            // println!("Body {:?}!", payload)
+        Ok(payload) => {
+            // Create protobuf Result type from parse_from_bytes
+            let result: GameRequest = GameRequest::from_bytes(payload);
+            let mut data = model.lock().unwrap();
+            let game_id: u64 = data.add_game(game::init(result.game_name().to_string()));
+            response = format!("Hello from POST {:?}", game_id)
         }
         Err(_) => {}
     }
-    // let game_r = gameX::merge_from_bytes(payload);
-    "Hello from POST Request"
-}
-
-pub async fn proto_test() -> impl Responder {
-    let mut out_response = GameRequest::new();
-    out_response.set_gameName("Response Game".to_string());
-    out_response.set_numPlayers(55);
-    HttpResponse::Ok().body(out_response.take_gameName())
+    response.to_string()
 }

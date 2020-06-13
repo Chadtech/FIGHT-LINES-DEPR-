@@ -498,9 +498,6 @@ version = "0.1.0"
 dependencies = [
  "indoc",
  "notify",
- "protobuf",
- "protobuf-codegen-pure",
- "serde",
 ]
 
 [[package]]
@@ -557,10 +554,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "dev-css"
-version = "0.1.0"
 
 [[package]]
 name = "discard"
@@ -641,10 +634,6 @@ dependencies = [
  "syn",
  "synstructure",
 ]
-
-[[package]]
-name = "fightlines_moves"
-version = "0.1.0"
 
 [[package]]
 name = "filetime"
@@ -1397,31 +1386,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "protobuf"
-version = "2.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e86d370532557ae7573551a1ec8235a0f8d6cb276c7c9e6aa490b511c447485"
-
-[[package]]
-name = "protobuf-codegen"
-version = "2.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de113bba758ccf2c1ef816b127c958001b7831136c9bc3f8e9ec695ac4e82b0c"
-dependencies = [
- "protobuf",
-]
-
-[[package]]
-name = "protobuf-codegen-pure"
-version = "2.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d1a4febc73bf0cada1d77c459a0c8e5973179f1cfd5b0f1ab789d45b17b6440"
-dependencies = [
- "protobuf",
- "protobuf-codegen",
-]
-
-[[package]]
 name = "pulldown-cmark"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1723,13 +1687,11 @@ dependencies = [
  "actix-files",
  "actix-rt",
  "actix-web",
- "code-gen",
  "env_logger",
- "fightlines_moves",
  "hex",
- "protobuf",
  "rand 0.3.23",
  "serde",
+ "shared",
 ]
 
 [[package]]
@@ -1737,6 +1699,14 @@ name = "sha1"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2579985fda508104f7587689507983eadd6a6e84dd35d6d115361f530916fa0d"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "serde",
+]
 
 [[package]]
 name = "signal-hook-registry"
@@ -2020,10 +1990,10 @@ dependencies = [
  "code-gen",
  "futures",
  "hex",
- "protobuf",
  "seed",
  "serde",
  "serde_bytes",
+ "shared",
  "wasm-bindgen-test",
 ]
 
