@@ -19,7 +19,7 @@ pub struct Game {
 /// a new game, but nothing else
 pub fn init(name: String) -> Game {
     Game {
-        name: name,
+        name,
         players: Vec::new(),
         round: 0,
     }

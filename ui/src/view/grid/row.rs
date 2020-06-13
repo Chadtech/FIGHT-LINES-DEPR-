@@ -1,6 +1,5 @@
 use crate::view::grid::cell;
 use crate::view::grid::cell::Cell;
-use crate::view::style;
 use seed::dom_entity_names::Tag;
 use seed::prelude::*;
 use std::borrow::Cow;

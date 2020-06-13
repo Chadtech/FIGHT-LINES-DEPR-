@@ -5,70 +5,135 @@
 /// The script is located in code-gen/src/main.rs
 ///
 
-pub static MARGIN_TOP_0: &'static str = "margin-top-0";
-pub static PADDING_TOP_0: &'static str = "padding-top-0";
-pub static MARGIN_BOTTOM_0: &'static str = "margin-bottom-0";
-pub static PADDING_BOTTOM_0: &'static str = "padding-bottom-0";
-pub static MARGIN_LEFT_0: &'static str = "margin-left-0";
-pub static PADDING_LEFT_0: &'static str = "padding-left-0";
-pub static MARGIN_RIGHT_0: &'static str = "margin-right-0";
-pub static PADDING_RIGHT_0: &'static str = "padding-right-0";
-pub static MARGIN_TOP_1: &'static str = "margin-top-1";
-pub static PADDING_TOP_1: &'static str = "padding-top-1";
-pub static MARGIN_BOTTOM_1: &'static str = "margin-bottom-1";
-pub static PADDING_BOTTOM_1: &'static str = "padding-bottom-1";
-pub static MARGIN_LEFT_1: &'static str = "margin-left-1";
-pub static PADDING_LEFT_1: &'static str = "padding-left-1";
-pub static MARGIN_RIGHT_1: &'static str = "margin-right-1";
-pub static PADDING_RIGHT_1: &'static str = "padding-right-1";
-pub static MARGIN_TOP_2: &'static str = "margin-top-2";
-pub static PADDING_TOP_2: &'static str = "padding-top-2";
-pub static MARGIN_BOTTOM_2: &'static str = "margin-bottom-2";
-pub static PADDING_BOTTOM_2: &'static str = "padding-bottom-2";
-pub static MARGIN_LEFT_2: &'static str = "margin-left-2";
-pub static PADDING_LEFT_2: &'static str = "padding-left-2";
-pub static MARGIN_RIGHT_2: &'static str = "margin-right-2";
-pub static PADDING_RIGHT_2: &'static str = "padding-right-2";
-pub static MARGIN_TOP_3: &'static str = "margin-top-3";
-pub static PADDING_TOP_3: &'static str = "padding-top-3";
-pub static MARGIN_BOTTOM_3: &'static str = "margin-bottom-3";
-pub static PADDING_BOTTOM_3: &'static str = "padding-bottom-3";
-pub static MARGIN_LEFT_3: &'static str = "margin-left-3";
-pub static PADDING_LEFT_3: &'static str = "padding-left-3";
-pub static MARGIN_RIGHT_3: &'static str = "margin-right-3";
-pub static PADDING_RIGHT_3: &'static str = "padding-right-3";
-pub static MARGIN_TOP_4: &'static str = "margin-top-4";
-pub static PADDING_TOP_4: &'static str = "padding-top-4";
-pub static MARGIN_BOTTOM_4: &'static str = "margin-bottom-4";
-pub static PADDING_BOTTOM_4: &'static str = "padding-bottom-4";
-pub static MARGIN_LEFT_4: &'static str = "margin-left-4";
-pub static PADDING_LEFT_4: &'static str = "padding-left-4";
-pub static MARGIN_RIGHT_4: &'static str = "margin-right-4";
-pub static PADDING_RIGHT_4: &'static str = "padding-right-4";
-pub static MARGIN_TOP_5: &'static str = "margin-top-5";
-pub static PADDING_TOP_5: &'static str = "padding-top-5";
-pub static MARGIN_BOTTOM_5: &'static str = "margin-bottom-5";
-pub static PADDING_BOTTOM_5: &'static str = "padding-bottom-5";
-pub static MARGIN_LEFT_5: &'static str = "margin-left-5";
-pub static PADDING_LEFT_5: &'static str = "padding-left-5";
-pub static MARGIN_RIGHT_5: &'static str = "margin-right-5";
-pub static PADDING_RIGHT_5: &'static str = "padding-right-5";
-pub static MARGIN_TOP_6: &'static str = "margin-top-6";
-pub static PADDING_TOP_6: &'static str = "padding-top-6";
-pub static MARGIN_BOTTOM_6: &'static str = "margin-bottom-6";
-pub static PADDING_BOTTOM_6: &'static str = "padding-bottom-6";
-pub static MARGIN_LEFT_6: &'static str = "margin-left-6";
-pub static PADDING_LEFT_6: &'static str = "padding-left-6";
-pub static MARGIN_RIGHT_6: &'static str = "margin-right-6";
-pub static PADDING_RIGHT_6: &'static str = "padding-right-6";
-pub static MARGIN_TOP_7: &'static str = "margin-top-7";
-pub static PADDING_TOP_7: &'static str = "padding-top-7";
-pub static MARGIN_BOTTOM_7: &'static str = "margin-bottom-7";
-pub static PADDING_BOTTOM_7: &'static str = "padding-bottom-7";
-pub static MARGIN_LEFT_7: &'static str = "margin-left-7";
-pub static PADDING_LEFT_7: &'static str = "padding-left-7";
-pub static MARGIN_RIGHT_7: &'static str = "margin-right-7";
-pub static PADDING_RIGHT_7: &'static str = "padding-right-7";
+#[allow(dead_code)]
+pub static MARGIN_TOP_0: &str = "margin-top-0";
+#[allow(dead_code)]
+pub static PADDING_TOP_0: &str = "padding-top-0";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_0: &str = "margin-bottom-0";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_0: &str = "padding-bottom-0";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_0: &str = "margin-left-0";
+#[allow(dead_code)]
+pub static PADDING_LEFT_0: &str = "padding-left-0";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_0: &str = "margin-right-0";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_0: &str = "padding-right-0";
+#[allow(dead_code)]
+pub static MARGIN_TOP_1: &str = "margin-top-1";
+#[allow(dead_code)]
+pub static PADDING_TOP_1: &str = "padding-top-1";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_1: &str = "margin-bottom-1";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_1: &str = "padding-bottom-1";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_1: &str = "margin-left-1";
+#[allow(dead_code)]
+pub static PADDING_LEFT_1: &str = "padding-left-1";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_1: &str = "margin-right-1";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_1: &str = "padding-right-1";
+#[allow(dead_code)]
+pub static MARGIN_TOP_2: &str = "margin-top-2";
+#[allow(dead_code)]
+pub static PADDING_TOP_2: &str = "padding-top-2";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_2: &str = "margin-bottom-2";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_2: &str = "padding-bottom-2";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_2: &str = "margin-left-2";
+#[allow(dead_code)]
+pub static PADDING_LEFT_2: &str = "padding-left-2";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_2: &str = "margin-right-2";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_2: &str = "padding-right-2";
+#[allow(dead_code)]
+pub static MARGIN_TOP_3: &str = "margin-top-3";
+#[allow(dead_code)]
+pub static PADDING_TOP_3: &str = "padding-top-3";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_3: &str = "margin-bottom-3";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_3: &str = "padding-bottom-3";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_3: &str = "margin-left-3";
+#[allow(dead_code)]
+pub static PADDING_LEFT_3: &str = "padding-left-3";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_3: &str = "margin-right-3";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_3: &str = "padding-right-3";
+#[allow(dead_code)]
+pub static MARGIN_TOP_4: &str = "margin-top-4";
+#[allow(dead_code)]
+pub static PADDING_TOP_4: &str = "padding-top-4";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_4: &str = "margin-bottom-4";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_4: &str = "padding-bottom-4";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_4: &str = "margin-left-4";
+#[allow(dead_code)]
+pub static PADDING_LEFT_4: &str = "padding-left-4";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_4: &str = "margin-right-4";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_4: &str = "padding-right-4";
+#[allow(dead_code)]
+pub static MARGIN_TOP_5: &str = "margin-top-5";
+#[allow(dead_code)]
+pub static PADDING_TOP_5: &str = "padding-top-5";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_5: &str = "margin-bottom-5";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_5: &str = "padding-bottom-5";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_5: &str = "margin-left-5";
+#[allow(dead_code)]
+pub static PADDING_LEFT_5: &str = "padding-left-5";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_5: &str = "margin-right-5";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_5: &str = "padding-right-5";
+#[allow(dead_code)]
+pub static MARGIN_TOP_6: &str = "margin-top-6";
+#[allow(dead_code)]
+pub static PADDING_TOP_6: &str = "padding-top-6";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_6: &str = "margin-bottom-6";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_6: &str = "padding-bottom-6";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_6: &str = "margin-left-6";
+#[allow(dead_code)]
+pub static PADDING_LEFT_6: &str = "padding-left-6";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_6: &str = "margin-right-6";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_6: &str = "padding-right-6";
+#[allow(dead_code)]
+pub static MARGIN_TOP_7: &str = "margin-top-7";
+#[allow(dead_code)]
+pub static PADDING_TOP_7: &str = "padding-top-7";
+#[allow(dead_code)]
+pub static MARGIN_BOTTOM_7: &str = "margin-bottom-7";
+#[allow(dead_code)]
+pub static PADDING_BOTTOM_7: &str = "padding-bottom-7";
+#[allow(dead_code)]
+pub static MARGIN_LEFT_7: &str = "margin-left-7";
+#[allow(dead_code)]
+pub static PADDING_LEFT_7: &str = "padding-left-7";
+#[allow(dead_code)]
+pub static MARGIN_RIGHT_7: &str = "margin-right-7";
+#[allow(dead_code)]
+pub static PADDING_RIGHT_7: &str = "padding-right-7";
+#[allow(dead_code)]
 pub fn margin_top(size: u8) -> &'static str {
     match size {
         0 => MARGIN_TOP_0,
@@ -82,6 +147,7 @@ pub fn margin_top(size: u8) -> &'static str {
         _ => MARGIN_TOP_0,
     }
 }
+#[allow(dead_code)]
 pub fn padding_top(size: u8) -> &'static str {
     match size {
         0 => PADDING_TOP_0,
@@ -95,6 +161,7 @@ pub fn padding_top(size: u8) -> &'static str {
         _ => PADDING_TOP_0,
     }
 }
+#[allow(dead_code)]
 pub fn margin_bottom(size: u8) -> &'static str {
     match size {
         0 => MARGIN_BOTTOM_0,
@@ -108,6 +175,7 @@ pub fn margin_bottom(size: u8) -> &'static str {
         _ => MARGIN_BOTTOM_0,
     }
 }
+#[allow(dead_code)]
 pub fn padding_bottom(size: u8) -> &'static str {
     match size {
         0 => PADDING_BOTTOM_0,
@@ -121,6 +189,7 @@ pub fn padding_bottom(size: u8) -> &'static str {
         _ => PADDING_BOTTOM_0,
     }
 }
+#[allow(dead_code)]
 pub fn margin_left(size: u8) -> &'static str {
     match size {
         0 => MARGIN_LEFT_0,
@@ -134,6 +203,7 @@ pub fn margin_left(size: u8) -> &'static str {
         _ => MARGIN_LEFT_0,
     }
 }
+#[allow(dead_code)]
 pub fn padding_left(size: u8) -> &'static str {
     match size {
         0 => PADDING_LEFT_0,
@@ -147,6 +217,7 @@ pub fn padding_left(size: u8) -> &'static str {
         _ => PADDING_LEFT_0,
     }
 }
+#[allow(dead_code)]
 pub fn margin_right(size: u8) -> &'static str {
     match size {
         0 => MARGIN_RIGHT_0,
@@ -160,6 +231,7 @@ pub fn margin_right(size: u8) -> &'static str {
         _ => MARGIN_RIGHT_0,
     }
 }
+#[allow(dead_code)]
 pub fn padding_right(size: u8) -> &'static str {
     match size {
         0 => PADDING_RIGHT_0,

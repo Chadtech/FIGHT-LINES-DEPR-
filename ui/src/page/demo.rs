@@ -83,7 +83,7 @@ fn view_form(_form: &Form) -> Node<Msg> {
                         At::Type => "text"
                         At::Placeholder => "Name of Game"
                 },
-                input_ev(Ev::Input, |new_value| Msg::GameNameChanged(new_value))
+                input_ev(Ev::Input, Msg::GameNameChanged)
             ]
         ],
         br![],
@@ -96,7 +96,7 @@ fn view_form(_form: &Form) -> Node<Msg> {
                     At::Placeholder => "3"
                     At::Type => "number"
                 },
-                input_ev(Ev::Input, |new_value| Msg::NumPlayersChanged(new_value))
+                input_ev(Ev::Input, Msg::NumPlayersChanged)
             ],
         ],
         br![],

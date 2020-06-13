@@ -125,14 +125,20 @@ fn style_constants() -> String {
 
     let mut size = 0;
 
+    fn allow_unused(buf: &mut String) {
+        buf.push_str("#[allow(dead_code)]\n");
+    }
+
     while size < MAX_STYLE_SIZE {
         let mut side_index = 0;
 
         while side_index < SIDES.len() {
             let side = SIDES[side_index];
 
+            allow_unused(&mut buf);
             buf.push_str(spacing_constant("margin", side, size).as_str());
             buf.push('\n');
+            allow_unused(&mut buf);
             buf.push_str(spacing_constant("padding", side, size).as_str());
             buf.push('\n');
 
@@ -143,8 +149,10 @@ fn style_constants() -> String {
     }
 
     for side in SIDES.iter() {
+        allow_unused(&mut buf);
         buf.push_str(spacing_function("margin", side).as_str());
         buf.push('\n');
+        allow_unused(&mut buf);
         buf.push_str(spacing_function("padding", side).as_str());
         buf.push('\n');
     }
@@ -204,7 +212,7 @@ fn spacing_function(has_side: &str, side: &str) -> String {
 
 fn spacing_constant(has_side: &str, side: &str, size: u8) -> String {
     format!(
-        "pub static {}: &'static str = {};",
+        "pub static {}: &str = {};",
         format!(
             "{}_{}_{}",
             has_side.to_ascii_uppercase(),
@@ -268,5 +276,4 @@ fn side_style_str(has_side: &str, side: &str, size: u8) -> String {
             base_number.pow(size as u32)
         )
     )
-    .to_owned()
 }

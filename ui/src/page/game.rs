@@ -1,12 +1,10 @@
 use crate::session::Session;
-use crate::view::grid::cell;
 use crate::view::grid::cell::{cell, Cell};
 use crate::view::grid::row;
 use crate::view::grid::row::{row, Row};
 use crate::view::sprite;
 use crate::view::sprite::{Source, Sprite};
 use crate::view::text::text;
-use seed::log;
 use seed::prelude::Node;
 
 ////////////////////////////////////////////////////////////////
@@ -19,7 +17,7 @@ pub struct Model {
     tank_position: Position,
 }
 #[derive(Clone)]
-struct Position {
+pub struct Position {
     x: u8,
     y: u8,
 }
@@ -81,7 +79,7 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
         for y in 0..SIZE {
             let tank_position = &model.tank_position;
 
-            let tank = if (x == tank_position.x && y == tank_position.y) {
+            let tank = if x == tank_position.x && y == tank_position.y {
                 Sprite::from_source(Source::LightTank)
                     .at_position(sprite::Position { x: 0, y: 0 })
                     .view(session)
