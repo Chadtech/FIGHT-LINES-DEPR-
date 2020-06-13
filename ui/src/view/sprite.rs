@@ -22,8 +22,8 @@ pub enum Source {
     LightTank,
 }
 
-pub static GRASS_TILE_FILE_NAME: &'static str = "grass_square";
-pub static LIGHT_TANK_FILE_NAME: &'static str = "light_tank";
+pub static GRASS_TILE_FILE_NAME: &str = "grass_square";
+pub static LIGHT_TANK_FILE_NAME: &str = "light_tank";
 
 impl Source {
     pub fn file_name(self) -> &'static str {
@@ -54,11 +54,8 @@ impl Sprite {
         url.push_str(self.src.file_name());
         url.push_str(".png");
 
-        match self.position {
-            Some(position) => {
-                element.add_style("position", "absolute");
-            }
-            None => {}
+        if let Some(_position) = self.position {
+            element.add_style("position", "absolute");
         }
 
         element.add_class(Cow::Borrowed("sprite"));

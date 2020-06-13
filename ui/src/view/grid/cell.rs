@@ -10,7 +10,7 @@ use web_sys::MouseEvent;
 
 pub struct Cell<MSG> {
     children: Vec<Node<MSG>>,
-    on_click: Option<(Rc<dyn Fn(MouseEvent) -> MSG>)>,
+    on_click: Option<Rc<dyn Fn(MouseEvent) -> MSG>>,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -36,11 +36,8 @@ where
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("cell")));
         element.children = self.children;
 
-        match self.on_click {
-            Some(on_click) => {
-                element.add_event_handler(mouse_ev(Ev::Click, move |event| on_click(event)));
-            }
-            None => {}
+        if let Some(on_click) = self.on_click {
+            element.add_event_handler(mouse_ev(Ev::Click, move |event| on_click(event)));
         }
 
         Node::Element(element)

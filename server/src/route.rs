@@ -30,16 +30,14 @@ pub async fn game_count(model: web::Data<Model>) -> impl Responder {
 pub async fn post_game(body: String, model: web::Data<Mutex<Model>>) -> impl Responder {
     // Decode the hex message from the server
     // hex decode returns a Result type, needs to match
-    let mut response = String::new();
     match hex::decode(body) {
         Ok(payload) => {
             // Create protobuf Result type from parse_from_bytes
             let result: GameRequest = GameRequest::from_bytes(payload);
             let mut data = model.lock().unwrap();
-            let game_id: u64 = data.add_game(game::init(result.game_name().to_string()));
-            response = format!("Hello from POST {:?}", game_id)
+            let game_id: u64 = data.add_game(game::init(result.game_name()));
+            format!("Hello from POST {:?}", game_id)
         }
-        Err(_) => {}
+        Err(error) => error.to_string(),
     }
-    response.to_string()
 }

@@ -23,24 +23,25 @@ enum Model {
 
 enum Msg {
     RouteChanged(Option<Route>),
-    StartGameMsg(page::start_game::Msg),
-    DemoMsg(page::demo::Msg),
-    LobbyMsg(page::lobby::Msg),
-    GameMsg(page::game::Msg),
+    Rendered(RenderInfo),
+    StartGame(page::start_game::Msg),
+    Demo(page::demo::Msg),
+    Lobby(page::lobby::Msg),
+    Game(page::game::Msg),
 }
 ////////////////////////////////////////////////////////////////
 // PRIVATE HELPERS //
 ////////////////////////////////////////////////////////////////
 
 impl Model {
-    pub fn get_session(&mut self) -> Session {
-        match &self {
-            Model::PageNotFound(session) => *session,
-            Model::Title(session) => *session,
-            Model::StartGame(sub_model) => sub_model.get_session(),
-            Model::Demo(session, _) => *session,
-            Model::Lobby(sub_model) => sub_model.get_session(),
-            Model::Game(sub_model) => sub_model.get_session(),
+    pub fn get_session_mut(&mut self) -> &mut Session {
+        match self {
+            Model::StartGame(sub_model) => sub_model.get_session_mut(),
+            Model::PageNotFound(session) => session,
+            Model::Title(session) => session,
+            Model::Demo(session, _) => session,
+            Model::Lobby(sub_model) => sub_model.get_session_mut(),
+            Model::Game(sub_model) => sub_model.get_session_mut(),
         }
     }
 }
@@ -53,8 +54,10 @@ fn before_mount(_: Url) -> BeforeMount {
     BeforeMount::new().mount_type(MountType::Takeover)
 }
 
-fn after_mount<'a>(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
+fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     orders.send_msg(Msg::RouteChanged(route::parse(url)));
+
+    orders.after_next_render(Msg::Rendered);
 
     // TODO we need some kind of logic to determine
     // if we should use `init_dev()`, because in some
@@ -73,31 +76,38 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::RouteChanged(maybe_route) => {
             handle_route(maybe_route, model);
         }
-        Msg::StartGameMsg(sub_msg) => {
+        Msg::Rendered(render_info) => {
+            model
+                .get_session_mut()
+                .set_current_time(render_info.timestamp);
+        }
+        Msg::StartGame(sub_msg) => {
             if let Model::StartGame(sub_model) = model {
-                page::start_game::update(sub_msg, sub_model, &mut orders.proxy(Msg::StartGameMsg))
+                page::start_game::update(sub_msg, sub_model, &mut orders.proxy(Msg::StartGame))
             }
         }
-        Msg::DemoMsg(sub_msg) => {
+        Msg::Demo(sub_msg) => {
             if let Model::Demo(_, sub_model) = model {
                 page::demo::update(sub_msg, sub_model)
             }
         }
-        Msg::LobbyMsg(sub_msg) => {
+        Msg::Lobby(sub_msg) => {
             if let Model::Lobby(sub_model) = model {
                 page::lobby::update(sub_msg, sub_model)
             }
         }
-        Msg::GameMsg(sub_msg) => {
+        Msg::Game(sub_msg) => {
             if let Model::Game(sub_model) = model {
                 page::game::update(sub_msg, sub_model)
             }
         }
     }
+
+    orders.after_next_render(Msg::Rendered);
 }
 
 fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
-    let session = model.get_session();
+    let session = *model.get_session_mut();
     match maybe_route {
         None => *model = Model::PageNotFound(session),
         Some(route) => match route {
@@ -143,19 +153,19 @@ fn view(model: &Model) -> Node<Msg> {
         Model::PageNotFound(_) => vec![div!["Page not found!"]],
         Model::StartGame(sub_model) => page::start_game::view(sub_model)
             .into_iter()
-            .map(|node| node.map_msg(Msg::StartGameMsg))
+            .map(|node| node.map_msg(Msg::StartGame))
             .collect(),
         Model::Demo(_, sub_model) => page::demo::view(sub_model)
             .into_iter()
-            .map(|node| node.map_msg(Msg::DemoMsg))
+            .map(|node| node.map_msg(Msg::Demo))
             .collect(),
         Model::Lobby(sub_model) => page::lobby::view(sub_model)
             .into_iter()
-            .map(|node| node.map_msg(Msg::LobbyMsg))
+            .map(|node| node.map_msg(Msg::Lobby))
             .collect(),
         Model::Game(sub_model) => page::game::view(sub_model)
             .into_iter()
-            .map(|node| node.map_msg(Msg::GameMsg))
+            .map(|node| node.map_msg(Msg::Game))
             .collect(),
     };
 

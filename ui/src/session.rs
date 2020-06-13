@@ -5,6 +5,11 @@
 #[derive(Copy, Clone)]
 pub struct Session {
     api_url: &'static str,
+
+    /// Not the time stamp since 1970
+    /// rather, the time stamp since the
+    /// beginning of browser session
+    timestamp: f64,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -14,6 +19,7 @@ pub struct Session {
 pub fn init_dev() -> Session {
     Session {
         api_url: DEV_API_URL,
+        timestamp: 0.0,
     }
 }
 
@@ -31,5 +37,13 @@ impl Session {
         buf.push_str(path);
 
         buf
+    }
+
+    pub fn set_current_time(&mut self, timestamp: f64) {
+        self.timestamp = timestamp;
+    }
+
+    pub fn get_current_time(self) -> f64 {
+        self.timestamp
     }
 }

@@ -1,4 +1,5 @@
 use crate::session::Session;
+use crate::view::button::button;
 use seed::prelude::Node;
 
 ////////////////////////////////////////////////////////////////
@@ -12,12 +13,12 @@ pub struct Model {
 
 #[derive(Clone)]
 pub enum Msg {
-    Msg,
+    StartClicked,
 }
 
 impl Model {
-    pub fn get_session(&self) -> Session {
-        self.session
+    pub fn get_session_mut(&mut self) -> &mut Session {
+        &mut self.session
     }
 
     pub fn get_game_id(&self) -> String {
@@ -38,7 +39,7 @@ pub fn init(session: Session, game_id: String) -> Model {
 
 pub fn update(msg: Msg, _model: &mut Model) {
     match msg {
-        Msg::Msg => {}
+        Msg::StartClicked => {}
     }
 }
 
@@ -47,5 +48,5 @@ pub fn update(msg: Msg, _model: &mut Model) {
 ////////////////////////////////////////////////////////////////
 
 pub fn view(_model: &Model) -> Vec<Node<Msg>> {
-    vec![]
+    vec![button("START", |_| Msg::StartClicked).view()]
 }

@@ -1,6 +1,7 @@
-use seed::log;
 use seed::Url;
+use std::fmt;
 use std::slice::Iter;
+
 ////////////////////////////////////////////////////////////////
 // TYPES //
 ////////////////////////////////////////////////////////////////
@@ -28,14 +29,17 @@ impl Route {
             Route::Game(game_id) => vec!["game", game_id.as_str()],
         }
     }
-    pub fn to_string(self) -> String {
+}
+
+impl fmt::Display for Route {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut buf = String::new();
 
         buf.push('/');
 
         buf.push_str(&self.path().join("/"));
 
-        buf
+        write!(f, "{}", buf)
     }
 }
 
