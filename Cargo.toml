@@ -1,7 +1,6 @@
 [workspace]
 
 members = [
-    "dev-css",
     "moves",
     "server",
     "ui",

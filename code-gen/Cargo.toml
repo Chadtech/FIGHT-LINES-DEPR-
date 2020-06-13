@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 indoc = "0.3"
-serde = "1.0.111"
+serde= "1.0"
 bincode = "1.0"
 notify = "4.0.15"

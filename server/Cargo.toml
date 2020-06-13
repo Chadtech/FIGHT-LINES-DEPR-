@@ -13,7 +13,7 @@ env_logger = "0.7.1"
 fightlines_moves = { path = "../moves" }
 rand = "0.3"
 actix-files = "0.2.1"
-serde="1.0"
+serde= "1.0"
 code-gen = { path = "../code-gen" }
 actix-cors = "0.2.0"
 hex = "0.4.2"
