@@ -16,10 +16,6 @@ body {
     --size-5: 32px;
 }
 
-row {
-    display: flex;
-}
-
 .center {
     justify-content: center;
 }
