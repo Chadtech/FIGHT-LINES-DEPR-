@@ -10,7 +10,6 @@ use seed::prelude::*;
 
 pub fn view<MSG>() -> Vec<Node<MSG>>
 where
-    MSG: Clone,
     MSG: 'static,
 {
     row::many(vec![

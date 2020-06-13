@@ -4,11 +4,15 @@ use std::sync::Mutex;
 
 use crate::domain::game;
 use crate::domain::model::Model;
+use std::fs;
 
 /// Responder Objects
 /// GET /
 pub async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello World")
+    match fs::read_to_string("../ui/index.html") {
+        Ok(index_file) => HttpResponse::Ok().body(index_file),
+        Err(_error) => HttpResponse::NotFound().body("File not found"),
+    }
 }
 
 /// GET /again
