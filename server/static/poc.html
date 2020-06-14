@@ -36,6 +36,9 @@
         <div class="tank" id="b9"></div>
         <div class="tank" id="b10"></div>
 
+        Animation
+        <div id="animation"></div>
+
     </div>
 </body>
 
@@ -48,87 +51,147 @@
         height: 96px;
         width: 96px;
         display: table-cell;
+        background: url("lightTank.png")
+    }
+
+    #animation {
+        height: 96px;
+        width: 96px;
+        animation: tank_moves 1s steps(10) infinite;
+        background: url("lightTank.png");
+    }
+
+    @keyframes tank_moves {
+        0% {
+            background-position: 0 0;
+        }
+
+        10% {
+            background-position: -96px 0;
+        }
+
+        20% {
+            background-position: -192px 0;
+
+        }
+
+        30% {
+            background-position: -288px 0;
+
+        }
+
+        40% {
+            background-position: -384px 0;
+
+        }
+
+        50% {
+            background-position: -480px 0;
+
+        }
+
+        60% {
+            background-position: -576px 0;
+
+        }
+
+        70% {
+            background-position: -672px 0;
+
+        }
+
+        80% {
+            background-position: -768px 0;
+        }
+
+        90% {
+            background-position: -864px 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+
     }
 
     #a1 {
-        background: url("lightTank.png") 0 0;
-
+        background-position: 0 0;
     }
 
     #a2 {
-        background: url("lightTank.png") -96px 0;
+        background-position: -96px 0;
     }
 
     #a3 {
-        background: url("lightTank.png") -192px 0;
+        background-position: -192px 0;
     }
 
     #a4 {
-        background: url("lightTank.png") -288px 0;
+        background-position: -288px 0;
     }
 
     #a5 {
-        background: url("lightTank.png") -384px 0;
+        background-position: -384px 0;
     }
 
     #a6 {
-        background: url("lightTank.png") -480px 0;
+        background-position: -480px 0;
     }
 
     #a7 {
-        background: url("lightTank.png") -576px 0;
+        background-position: -576px 0;
     }
 
     #a8 {
-        background: url("lightTank.png") -672px 0;
+        background-position: -672px 0;
     }
 
     #a9 {
-        background: url("lightTank.png") -768px 0;
+        background-position: -768px 0;
     }
 
     #a10 {
-        background: url("lightTank.png") -864px 0;
+        background-position: -864px 0;
     }
 
     #b1 {
-        background: url("lightTank.png") 0 -96px;
+        background-position:  0 -96px;
     }
 
     #b2 {
-        background: url("lightTank.png") -96px -96px
+        background-position:  -96px -96px
     }
 
     #b3 {
-        background: url("lightTank.png") -192px -96px;
+        background-position: -192px -96px;
     }
 
     #b4 {
-        background: url("lightTank.png") -288px -96px;
+        background-position: -288px -96px;
     }
 
     #b5 {
-        background: url("lightTank.png") -384px -96px;
+        background-position: -384px -96px;
     }
 
     #b6 {
-        background: url("lightTank.png") -480px -96px;
+        background-position: -480px -96px;
     }
 
     #b7 {
-        background: url("lightTank.png") -576px -96px;
+        background-position: -576px -96px;
     }
 
     #b8 {
-        background: url("lightTank.png") -672px -96px;
+        background-position: -672px -96px;
     }
 
     #b9 {
-        background: url("lightTank.png") -768px -96px;
+        background-position: -768px -96px;
     }
 
     #b10 {
-        background: url("lightTank.png") -864px -96px;
+        background-position: -864px -96px;
     }
 </style>
 
