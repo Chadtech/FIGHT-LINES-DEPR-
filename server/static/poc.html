@@ -36,8 +36,16 @@
         <div class="tank" id="b9"></div>
         <div class="tank" id="b10"></div>
 
-        Animation
+        Animation One
         <div id="animation"></div>
+
+        Animation Two
+        <div id="animation2"></div>
+
+        Animation Three
+        <div id="animation3"></div>
+
+
 
     </div>
 </body>
@@ -57,62 +65,50 @@
     #animation {
         height: 96px;
         width: 96px;
-        animation: tank_moves 1s steps(10) infinite;
+        animation: tank_moves 5s steps(10) infinite;
         background: url("lightTank.png");
     }
 
     @keyframes tank_moves {
+        100% {
+            background-position: -960px 0;
+        }
+    }
+
+    #animation2 {
+        height: 96px;
+        width: 96px;
+        animation: tank_fire 5s steps(10) infinite;
+        background: url("lightTank.png");
+    }
+
+    @keyframes tank_fire {
         0% {
-            background-position: 0 0;
-        }
-
-        10% {
-            background-position: -96px 0;
-        }
-
-        20% {
-            background-position: -192px 0;
-
-        }
-
-        30% {
-            background-position: -288px 0;
-
-        }
-
-        40% {
-            background-position: -384px 0;
-
-        }
-
-        50% {
-            background-position: -480px 0;
-
-        }
-
-        60% {
-            background-position: -576px 0;
-
-        }
-
-        70% {
-            background-position: -672px 0;
-
-        }
-
-        80% {
-            background-position: -768px 0;
-        }
-
-        90% {
-            background-position: -864px 0;
+            background-position: 0 -96px;
         }
 
         100% {
-            background-position: 0 0;
+            background-position: -960px -96px;
+        }
+    }
+
+    #animation3 {
+        height: 96px;
+        width: 96px;
+        animation: tank_move3 5s steps(10) infinite;
+        background: url("lightTank.png");
+    }
+
+    @keyframes tank_move3 {
+        0% {
+            background-position: 0 -192px;
         }
 
+        100% {
+            background-position: -960px -192px;
+        }
     }
+
 
     #a1 {
         background-position: 0 0;
@@ -155,11 +151,11 @@
     }
 
     #b1 {
-        background-position:  0 -96px;
+        background-position: 0 -96px;
     }
 
     #b2 {
-        background-position:  -96px -96px
+        background-position: -96px -96px
     }
 
     #b3 {
