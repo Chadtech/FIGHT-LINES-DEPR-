@@ -14,11 +14,8 @@ enum Move {
     Move,
 }
 
-pub fn init(name: &str) -> Player {
-    Player {
-        name: name.to_string(),
-        moves: None,
-    }
+pub fn init(name: String) -> Player {
+    Player { name, moves: None }
 }
 
 impl Player {

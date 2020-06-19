@@ -6,6 +6,7 @@ use seed::{prelude::*, *};
 mod page;
 mod route;
 mod session;
+mod util;
 mod view;
 
 ////////////////////////////////////////////////////////////////
