@@ -115,7 +115,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::NewGameResponse(response) => {
             let game_id = response.get_game_id();
 
-            model.record_error(game_id.to_string());
+            // TODO after we get the game_id we should navigate to the lobby page
         }
         Msg::NewGameFailed(error) => {
             model.record_error(error);
