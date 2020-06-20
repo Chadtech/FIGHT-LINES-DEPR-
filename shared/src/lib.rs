@@ -1,1 +1,1 @@
-pub mod game_request;
+pub mod api;

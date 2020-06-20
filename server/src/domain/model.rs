@@ -84,7 +84,10 @@ mod model_tests {
     fn add_game_increases_game_count() {
         let mut test_model = init_test_model();
 
-        test_model.add_game(game::init("test game".to_string()));
+        test_model.add_game(game::init_lobby(
+            "test game".to_string(),
+            "hank".to_string(),
+        ));
 
         assert_eq!(test_model.games_count(), 1);
     }

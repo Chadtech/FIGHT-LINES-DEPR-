@@ -4,10 +4,18 @@ use super::player::Player;
 // Types //
 ////////////////////////////////////////////////////////////////
 
-pub struct Game {
+pub enum Game {
+    Lobby(LobbyModel),
+}
+
+pub struct LobbyModel {
+    metadata: Metadata,
+    host: Player,
+    opponents: Vec<Player>,
+}
+
+pub struct Metadata {
     name: String,
-    players: Vec<Player>,
-    round: i64,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -17,37 +25,34 @@ pub struct Game {
 /// The parameters for this should be
 /// all the things needed to make
 /// a new game, but nothing else
-pub fn init(name: String) -> Game {
-    Game {
-        name,
-        players: Vec::new(),
-        round: 0,
-    }
+pub fn init_lobby(name: String, host_name: String) -> Game {
+    Game::Lobby(LobbyModel {
+        metadata: Metadata { name: name.clone() },
+        host: player::init(host_name.clone()),
+        opponents: Vec::new(),
+    })
 }
 
 /// Api
 impl Game {
-    pub fn game_name(&self) -> String {
-        self.name.to_string()
-    }
-
-    pub fn game_round(&self) -> i64 {
-        self.round
+    pub fn game_name(self) -> String {
+        match self {
+            Game::Lobby(lobby) => lobby.metadata.name,
+        }
     }
 
     pub fn num_players(&self) -> usize {
-        self.players.len()
+        match self {
+            Game::Lobby(lobby) => lobby.opponents.len() + 1,
+        }
     }
 
-    pub fn update_game_name(&mut self, new_name: String) {
-        self.name = new_name
-    }
-
-    pub fn add_player(&mut self, new_player: &str) {
-        self.players.push(player::init(new_player));
-    }
-    pub fn update_round(&mut self) {
-        self.round += 1
+    pub fn add_player(&mut self, new_player: String) {
+        match self {
+            Game::Lobby(lobby) => {
+                lobby.opponents.push(player::init(new_player));
+            }
+        }
     }
 }
 
@@ -61,36 +66,16 @@ mod game_test {
     use crate::domain::game::Game;
 
     fn init_game_obj() -> Game {
-        game::init("Hello World".to_string())
-    }
-    #[test]
-    fn update_name() {
-        let mut game_model = init_game_obj();
-
-        game_model.update_game_name(String::from("Antidote"));
-
-        assert_eq!(game_model.name, "Antidote")
+        game::init_lobby("Hello World".to_string(), "Hank".to_string())
     }
 
     #[test]
     fn update_players() {
         let mut game_model = init_game_obj();
-        game_model.add_player(&"Harribel");
-        game_model.add_player(&"Lisa");
-        game_model.add_player(&"Chen");
+        game_model.add_player("Harribel".to_string());
+        game_model.add_player("Lisa".to_string());
+        game_model.add_player("Chen".to_string());
 
-        assert_eq!(game_model.num_players(), 3)
-    }
-    #[test]
-    fn update_rounds() {
-        let mut game_model = init_game_obj();
-        game_model.update_round();
-
-        assert_eq!(game_model.round, 1);
-
-        game_model.update_round();
-        assert_eq!(game_model.round, 2);
-        game_model.update_round();
-        assert_eq!(game_model.round, 3);
+        assert_eq!(game_model.num_players(), 4)
     }
 }
