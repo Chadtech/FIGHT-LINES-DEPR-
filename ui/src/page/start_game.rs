@@ -113,7 +113,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             model.update_player_name(new_field);
         }
         Msg::NewGameResponse(response) => {
-            let game_id = response.get_game_id();
+            // let _game_id = response.get_game_id();
 
             // TODO after we get the game_id we should navigate to the lobby page
         }
