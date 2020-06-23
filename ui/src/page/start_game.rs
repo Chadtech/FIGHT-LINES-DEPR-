@@ -4,6 +4,7 @@ use crate::view::button::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
+use seed::log;
 use seed::prelude::{fetch, Method, Node, Orders, Request};
 use shared::api::start_game;
 
@@ -22,6 +23,7 @@ enum RequestState {
     Ready,
     Waiting,
     Failed(String),
+    Finished(u64),
 }
 
 #[derive(Clone)]
@@ -51,6 +53,9 @@ impl Model {
 
     pub fn waiting(&mut self) {
         self.request_state = RequestState::Waiting;
+    }
+    pub fn ready_state(&mut self, game_id: u64) {
+        self.request_state = RequestState::Finished(game_id);
     }
 }
 
@@ -113,7 +118,9 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             model.update_player_name(new_field);
         }
         Msg::NewGameResponse(response) => {
-            // let _game_id = response.get_game_id();
+            let game_id = response.get_game_id();
+            log!(game_id);
+            model.ready_state(game_id)
 
             // TODO after we get the game_id we should navigate to the lobby page
         }
@@ -162,5 +169,11 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
         .view(),
         RequestState::Waiting => vec![row::single(text("Waiting..")).view()],
         RequestState::Failed(error_msg) => vec![row::single(text(error_msg.as_str())).view()],
+        RequestState::Finished(value) => {
+            let mut str_message = String::new();
+            str_message.push_str("Game_id: ");
+            str_message.push_str(&value.to_string());
+            vec![row::single(text(&str_message.to_string())).view()]
+        }
     }
 }
