@@ -43,8 +43,8 @@ impl Model {
     }
     pub fn get_game(&self, game_id: u64) -> Game {
         match self.games.get(&game_id) {
-            Some(game) => game,
-            None => Err,
+            Some(&game) => game,
+            None => _
         }
     }
 
