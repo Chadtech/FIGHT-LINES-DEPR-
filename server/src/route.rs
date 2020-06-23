@@ -31,7 +31,7 @@ pub async fn post_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
     // hex decode returns a Result type, needs to match
 
     match hex::decode(body) {
-        Ok(bytes) => match start_game::Request::from_bytes(bytes) {
+        Ok(bytes) => match start_game::GameRequest::from_bytes(bytes) {
             Ok(request) => {
                 let mut model = mutex.lock().unwrap();
 
@@ -46,4 +46,17 @@ pub async fn post_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
         },
         Err(error) => error.to_string(),
     }
+}
+
+pub async fn join_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Responder {
+    match hex::decode(body) {
+        Ok(bytes) => match start_game::JoinRequest::from_bytes(bytes) {
+            Ok(request) => {
+                // let mut model = mutex.lock().unwrap();
+                let game_id = request.game_id();
+                println!("{}", game_id);
+            }
+        },
+    }
+    "Work in Progress"
 }

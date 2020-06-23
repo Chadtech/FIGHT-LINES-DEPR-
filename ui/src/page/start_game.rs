@@ -16,6 +16,7 @@ pub struct Model {
     game_name_field: String,
     player_name_field: String,
     session: Session,
+    join_game_id: String,
     request_state: RequestState,
 }
 
@@ -28,11 +29,14 @@ enum RequestState {
 
 #[derive(Clone)]
 pub enum Msg {
-    StartClicked,
+    StartGameClicked,
     GameNameFieldUpdated(String),
     PlayerNameFieldUpdated(String),
+    GameIdFieldUpdated(String),
     NewGameResponse(start_game::Response),
     NewGameFailed(String),
+    JoinGameClicked,
+    JoinGameResponse(start_game::JoinResponse),
 }
 
 impl Model {
@@ -46,14 +50,17 @@ impl Model {
     pub fn update_player_name(&mut self, new_name: String) {
         self.player_name_field = new_name;
     }
+    pub fn update_game_id(&mut self, new_id: String) {
+        self.join_game_id = new_id;
+    }
 
     pub fn record_error(&mut self, error_msg: String) {
         self.request_state = RequestState::Failed(error_msg);
     }
-
     pub fn waiting(&mut self) {
         self.request_state = RequestState::Waiting;
     }
+
     pub fn ready_state(&mut self, game_id: u64) {
         self.request_state = RequestState::Finished(game_id);
     }
@@ -68,6 +75,7 @@ pub fn init(session: Session) -> Model {
         game_name_field: String::new(),
         player_name_field: String::new(),
         session,
+        join_game_id: String::new(),
         request_state: RequestState::Ready,
     }
 }
@@ -78,8 +86,8 @@ pub fn init(session: Session) -> Model {
 
 pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
-        Msg::StartClicked => {
-            let game_request = start_game::Request::init(
+        Msg::StartGameClicked => {
+            let game_request = start_game::GameRequest::init(
                 model.game_name_field.clone(),
                 model.player_name_field.clone(),
             );
@@ -111,21 +119,51 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 }
             }
         }
-        Msg::GameNameFieldUpdated(new_field) => {
-            model.update_game_name(new_field);
-        }
-        Msg::PlayerNameFieldUpdated(new_field) => {
-            model.update_player_name(new_field);
-        }
+        Msg::GameNameFieldUpdated(new_field) => model.update_game_name(new_field),
+        Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
+        Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
         Msg::NewGameResponse(response) => {
             let game_id = response.get_game_id();
             log!(game_id);
             model.ready_state(game_id)
-
             // TODO after we get the game_id we should navigate to the lobby page
         }
-        Msg::NewGameFailed(error) => {
-            model.record_error(error);
+
+        Msg::NewGameFailed(error) => model.record_error(error),
+        Msg::JoinGameResponse(response) => {
+            let game_id = response.get_game_id();
+        }
+        Msg::JoinGameClicked => {
+            let game_request = start_game::JoinRequest::init(
+                model.player_name_field.clone(),
+                model.join_game_id.clone(),
+            );
+
+            let url = model.get_session_mut().url("/game/join");
+            match game_request.to_bytes() {
+                Ok(bytes) => {
+                    model.waiting();
+                    orders.skip().perform_cmd({
+                        async {
+                            let msg = match send_message(url, bytes).await {
+                                Ok(bytes) => match start_game::Response::from_bytes(bytes) {
+                                    Ok(response) => Msg::NewGameResponse(response),
+                                    Err(error) => Msg::NewGameFailed(error.to_string()),
+                                },
+                                Err(error) => {
+                                    let fetch_error = util::http::fetch_error_to_string(error);
+                                    Msg::NewGameFailed(fetch_error)
+                                }
+                            };
+
+                            msg
+                        }
+                    });
+                }
+                Err(error) => {
+                    model.record_error(error.to_string());
+                }
+            }
         }
     }
 }
@@ -163,7 +201,25 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
                 .placeholder("game name")
                 .view(),
             ),
-            row::single(button("start", |_| Msg::StartClicked).view()),
+            row::single(button("start", |_| Msg::StartGameClicked).view()),
+            // Join Game Functionality
+            row::single(text("______________")),
+            row::single(text("Join Game")),
+            row::single(
+                text_field(model.player_name_field.as_str(), |event| {
+                    Msg::PlayerNameFieldUpdated(event)
+                })
+                .placeholder("player name")
+                .view(),
+            ),
+            row::single(
+                text_field(model.join_game_id.as_str(), |event| {
+                    Msg::GameIdFieldUpdated(event)
+                })
+                .placeholder("Game ID")
+                .view(),
+            ),
+            row::single(button("Join", |_| Msg::JoinGameClicked).view()),
         ])
         .map_rows(|row| row.center(true))
         .view(),
