@@ -41,11 +41,8 @@ impl Model {
         self.games.insert(id, new_game);
         id
     }
-    pub fn get_game(&self, game_id: u64) -> Game {
-        match self.games.get(&game_id) {
-            Some(&game) => game,
-            None => _
-        }
+    pub fn get_game(&self, game_id: u64) -> Option<&Game> {
+        self.games.get(&game_id)
     }
 
     fn set_seed(&mut self, randomness_seed: usize) {
