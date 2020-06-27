@@ -7,7 +7,6 @@ pub enum Game {
     Lobby(LobbyModel),
 }
 
-
 pub struct LobbyModel {
     metadata: Metadata,
     host: Player,
@@ -35,9 +34,9 @@ pub fn init_lobby(name: String, host_name: String) -> Game {
 
 /// Api
 impl Game {
-    pub fn game_name(self) -> String {
+    pub fn game_name(&self) -> &str {
         match self {
-            Game::Lobby(lobby) => lobby.metadata.name,
+            Game::Lobby(lobby) => lobby.metadata.name.as_str(),
         }
     }
 

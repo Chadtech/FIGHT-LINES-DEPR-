@@ -52,11 +52,11 @@ pub async fn join_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
     match hex::decode(body) {
         Ok(bytes) => match start_game::JoinRequest::from_bytes(bytes) {
             Ok(request) => {
-                let mut model = mutex.lock().unwrap();
+                let mut model = &mutex.lock().unwrap();
                 let game_id = request.game_id();
                 println!("{}", game_id);
                 match model.get_game(game_id) {
-                    Some(&game) => *game.game_name(),
+                    Some(game) => game.game_name().to_string(),
                     None => false.to_string(),
                 }
             }
