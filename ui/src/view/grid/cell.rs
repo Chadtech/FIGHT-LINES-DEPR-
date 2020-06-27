@@ -32,6 +32,11 @@ impl<T> Cell<T>
 where
     T: 'static,
 {
+    pub fn on_click(mut self, on_click: impl FnOnce(MouseEvent) -> T + Clone + 'static) -> Cell<T> {
+        self.on_click = Some(Rc::new(move |event| on_click.clone()(event)));
+        self
+    }
+
     pub fn view(self) -> Node<T> {
         let mut element: El<T> = El::empty(Tag::Custom(Cow::Borrowed("cell")));
         element.children = self.children;
@@ -41,10 +46,5 @@ where
         }
 
         Node::Element(element)
-    }
-
-    pub fn on_click(mut self, on_click: impl FnOnce(MouseEvent) -> T + Clone + 'static) -> Cell<T> {
-        self.on_click = Some(Rc::new(move |event| on_click.clone()(event)));
-        self
     }
 }

@@ -13,6 +13,13 @@ pub struct Session {
 }
 
 ////////////////////////////////////////////////////////////////
+// CONSTS //
+////////////////////////////////////////////////////////////////
+
+static DEV_API_URL: &str = "http://localhost:2943";
+static FPS_24: f64 = 41.6667;
+
+////////////////////////////////////////////////////////////////
 // INIT //
 ////////////////////////////////////////////////////////////////
 
@@ -22,8 +29,6 @@ pub fn init_dev() -> Session {
         timestamp: 0.0,
     }
 }
-
-static DEV_API_URL: &str = "http://localhost:2943";
 
 ////////////////////////////////////////////////////////////////
 // API //
@@ -45,5 +50,44 @@ impl Session {
 
     pub fn get_current_time(self) -> f64 {
         self.timestamp
+    }
+
+    pub fn get_frame(self) -> i64 {
+        (self.get_current_time() / FPS_24) as i64
+    }
+
+    pub fn asset_url(self, file_name: &'static str) -> String {
+        let mut path = String::new();
+        path.push_str("/assets/");
+        path.push_str(file_name);
+        path.push_str(".png");
+
+        self.url(path.as_str())
+    }
+}
+
+////////////////////////////////////////////////////////////////
+// Tests //
+////////////////////////////////////////////////////////////////
+
+#[cfg(test)]
+mod session_tests {
+    use crate::session::{init_dev, FPS_24};
+
+    #[test]
+    fn within_first_frame() {
+        let mut session = init_dev();
+
+        session.set_current_time(FPS_24 - 0.001);
+
+        assert_eq!(session.get_frame(), 0);
+    }
+    #[test]
+    fn after_first_frame() {
+        let mut session = init_dev();
+
+        session.set_current_time(FPS_24 + 0.001);
+
+        assert_eq!(session.get_frame(), 1);
     }
 }

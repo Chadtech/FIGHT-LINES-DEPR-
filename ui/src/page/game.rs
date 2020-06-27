@@ -2,8 +2,8 @@ use crate::session::Session;
 use crate::view::grid::cell::{cell, Cell};
 use crate::view::grid::row;
 use crate::view::grid::row::{row, Row};
-use crate::view::sprite;
-use crate::view::sprite::{Source, Sprite};
+use crate::view::image;
+use crate::view::sprite::{grass_tile, light_tank};
 use crate::view::text::text;
 use seed::prelude::Node;
 
@@ -84,19 +84,14 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
             let tank_position = &model.tank_position;
 
             let tank = if x == tank_position.x && y == tank_position.y {
-                Sprite::from_source(Source::LightTank)
-                    .at_position(sprite::Position { x: 0, y: 0 })
-                    .view(session)
+                light_tank::Model::init().to_img(session).view()
             } else {
                 text("")
             };
 
             grass_tile_cells.push(
-                cell(vec![
-                    Sprite::from_source(Source::GrassTile).view(session),
-                    tank,
-                ])
-                .on_click(move |_| Msg::CellClicked(Position { x, y })),
+                cell(vec![grass_tile::Model::init().to_img(session).view(), tank])
+                    .on_click(move |_| Msg::CellClicked(Position { x, y })),
             )
         }
 
