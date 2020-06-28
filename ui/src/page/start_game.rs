@@ -213,11 +213,9 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
                 .view(),
             ),
             row::single(
-                text_field(model.join_game_id.as_str(), |event| {
-                    Msg::GameIdFieldUpdated(event)
-                })
-                .placeholder("Game ID")
-                .view(),
+                text_field(&model.join_game_id, |event| Msg::GameIdFieldUpdated(event))
+                    .placeholder("Game ID")
+                    .view(),
             ),
             row::single(button("Join", |_| Msg::JoinGameClicked).view()),
         ])
