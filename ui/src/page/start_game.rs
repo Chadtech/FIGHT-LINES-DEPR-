@@ -133,11 +133,15 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::JoinGameResponse(response) => {
             let game_id = response.get_game_id();
         }
+        
         Msg::JoinGameClicked => {
-            let game_request = start_game::JoinRequest::init(
-                model.player_name_field.clone(),
-                model.join_game_id.clone(),
-            );
+            let mut net_game_id: u64 = 0;
+            match model.join_game_id.clone().parse::<u64>() {
+                Ok(n) => net_game_id = n,
+                Err(error) => log!(error),
+            }
+            let game_request =
+                start_game::JoinRequest::init(model.player_name_field.clone(), net_game_id);
 
             let url = model.get_session_mut().url("/game/join");
             match game_request.to_bytes() {

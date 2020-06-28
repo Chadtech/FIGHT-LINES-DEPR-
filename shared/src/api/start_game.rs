@@ -39,11 +39,11 @@ impl GameRequest {
 #[derive(Serialize, Deserialize)]
 pub struct JoinRequest {
     player_name: String,
-    game_id: String,
+    game_id: u64,
 }
 
 impl JoinRequest {
-    pub fn init(player_name: String, game_id: String) -> JoinRequest {
+    pub fn init(player_name: String, game_id: u64) -> JoinRequest {
         JoinRequest {
             player_name,
             game_id,
@@ -52,8 +52,8 @@ impl JoinRequest {
     pub fn player_name(&self) -> String {
         self.player_name.clone()
     }
-    pub fn game_id(&self) -> String {
-        self.game_id.clone()
+    pub fn game_id(&self) -> u64 {
+        self.game_id
     }
     pub fn to_bytes(&self) -> bincode::Result<Vec<u8>> {
         bincode::serialize(self)
