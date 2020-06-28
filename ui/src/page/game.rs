@@ -22,7 +22,6 @@ pub struct Position {
     y: u8,
 }
 
-#[derive(Clone)]
 pub enum Msg {
     CellClicked(Position),
 }
@@ -97,7 +96,7 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
 
         grass_tile_rows.push(row(grass_tile_cells));
     }
-    let timestamp_str = session.get_current_time().to_string();
+    let timestamp_str = session.get_render_delta().to_string();
 
     let timestamp_row = row::single(text(timestamp_str.as_str()));
 

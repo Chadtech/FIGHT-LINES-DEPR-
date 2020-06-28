@@ -10,6 +10,7 @@ pub struct Session {
     /// rather, the time stamp since the
     /// beginning of browser session
     timestamp: f64,
+    timestamp_delta: f64,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -27,6 +28,7 @@ pub fn init_dev() -> Session {
     Session {
         api_url: DEV_API_URL,
         timestamp: 0.0,
+        timestamp_delta: 0.0,
     }
 }
 
@@ -44,12 +46,24 @@ impl Session {
         buf
     }
 
-    pub fn set_current_time(&mut self, timestamp: f64) {
+    pub fn set_current_time(&mut self, timestamp: f64) -> &mut Session {
         self.timestamp = timestamp;
+        self
+    }
+
+    pub fn set_render_delta(&mut self, maybe_delta: Option<f64>) -> &mut Session {
+        if let Some(delta) = maybe_delta {
+            self.timestamp_delta = delta;
+        }
+        self
     }
 
     pub fn get_current_time(self) -> f64 {
         self.timestamp
+    }
+
+    pub fn get_render_delta(self) -> f64 {
+        self.timestamp_delta
     }
 
     pub fn get_frame(self) -> i64 {

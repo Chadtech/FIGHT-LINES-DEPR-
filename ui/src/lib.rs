@@ -80,7 +80,8 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::Rendered(render_info) => {
             model
                 .get_session_mut()
-                .set_current_time(render_info.timestamp);
+                .set_current_time(render_info.timestamp)
+                .set_render_delta(render_info.timestamp_delta);
         }
         Msg::StartGame(sub_msg) => {
             if let Model::StartGame(sub_model) = model {

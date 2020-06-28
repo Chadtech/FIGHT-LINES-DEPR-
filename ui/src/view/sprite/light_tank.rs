@@ -11,7 +11,7 @@ pub enum Model {
     FireCannon,
 }
 
-static FIRE_CANNON_ANIMATION_LENGTH: i64 = 5;
+static FIRE_CANNON_ANIMATION_LENGTH: i64 = 15;
 
 ////////////////////////////////////////////////////////////////
 // CONSTS //
@@ -38,7 +38,7 @@ impl Model {
         match self {
             Model::FireCannon => image::Position {
                 x: step * (-96 as i64),
-                y: 0,
+                y: 192,
             },
         }
     }
