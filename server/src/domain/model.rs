@@ -1,13 +1,14 @@
 use super::game::Game;
 use rand::{Rng, SeedableRng, StdRng};
 use std::collections::HashMap;
+use uuid::Uuid;
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
 
 pub struct Model {
     /// String is an id
-    games: HashMap<u64, Game>,
+    games: HashMap<String, Game>,
     randomness_seed: usize,
 }
 
@@ -25,7 +26,6 @@ pub fn init(randomness_seed: usize) -> Model {
 ////////////////////////////////////////////////////////////////
 // Api //
 ////////////////////////////////////////////////////////////////
-
 impl Model {
     pub fn games_count(&self) -> usize {
         self.games.len()
@@ -33,15 +33,20 @@ impl Model {
     pub fn random_seed(&self) -> usize {
         self.randomness_seed
     }
-    pub fn add_game(&mut self, new_game: Game) -> u64 {
+    pub fn add_game(&mut self, new_game: Game) -> String {
         let mut rng = self.get_rng();
 
-        let id: u64 = rng.gen();
+        let uuid_id = Uuid::new_v4();
+
+        let id: String = uuid_id.to_simple().to_string();
+        
+        // Did this to pass the "value borrowed here after move"
+        let refrence = id.clone();
 
         self.games.insert(id, new_game);
-        id
+        refrence
     }
-    pub fn get_game(&self, game_id: u64) -> Option<&Game> {
+    pub fn get_game(&self, game_id: String) -> Option<&Game> {
         self.games.get(&game_id)
     }
 

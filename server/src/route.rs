@@ -36,7 +36,17 @@ pub async fn post_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
                 let mut model = mutex.lock().unwrap();
 
                 let new_game = game::init_lobby(request.game_name(), request.host_name());
-                let game_id: u64 = model.add_game(new_game);
+                let game_id: String = model.add_game(new_game);
+                
+                // To be Deleted
+                println!(
+                    "\n\n New Game created, id:{}, name:{}, host:{} \n\n",
+                    game_id,
+                    request.game_name(),
+                    request.host_name()
+                );
+
+                drop(model);
                 match start_game::Response::init(game_id).to_bytes() {
                     Ok(response_bytes) => hex::encode(response_bytes),
                     Err(error) => error.to_string(),
@@ -52,13 +62,21 @@ pub async fn join_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
     match hex::decode(body) {
         Ok(bytes) => match start_game::JoinRequest::from_bytes(bytes) {
             Ok(request) => {
-                let mut model = &mutex.lock().unwrap();
-                let game_id: u64 = request.game_id();
+                let model = &mutex.lock().unwrap();
+                let game_id: String = request.game_id();
                 let plyr_name: String = request.player_name();
+
                 println!("Game_id: {}, player_name: {}", game_id, plyr_name);
+
                 match model.get_game(game_id) {
-                    Some(game) => game.game_name().to_string(),
-                    None => false.to_string(),
+                    Some(game) => {
+                        println!("Game Found");
+                        game.game_name().to_string()
+                    }
+                    None => {
+                        println!("No Game Found");
+                        false.to_string()
+                    }
                 }
             }
             Err(error) => false.to_string(),

@@ -39,11 +39,11 @@ impl GameRequest {
 #[derive(Serialize, Deserialize)]
 pub struct JoinRequest {
     player_name: String,
-    game_id: u64,
+    game_id: String,
 }
 
 impl JoinRequest {
-    pub fn init(player_name: String, game_id: u64) -> JoinRequest {
+    pub fn init(player_name: String, game_id: String) -> JoinRequest {
         JoinRequest {
             player_name,
             game_id,
@@ -52,8 +52,8 @@ impl JoinRequest {
     pub fn player_name(&self) -> String {
         self.player_name.clone()
     }
-    pub fn game_id(&self) -> u64 {
-        self.game_id
+    pub fn game_id(&self) -> String {
+        self.game_id.clone()
     }
     pub fn to_bytes(&self) -> bincode::Result<Vec<u8>> {
         bincode::serialize(self)
@@ -69,16 +69,16 @@ impl JoinRequest {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Response {
-    game_id: u64,
+    game_id: String,
 }
 
 impl Response {
-    pub fn init(game_id: u64) -> Response {
+    pub fn init(game_id: String) -> Response {
         Response { game_id }
     }
 
-    pub fn get_game_id(&self) -> u64 {
-        self.game_id
+    pub fn get_game_id(&self) -> String {
+        self.game_id.clone()
     }
 
     pub fn to_bytes(&self) -> bincode::Result<Vec<u8>> {
@@ -96,13 +96,13 @@ impl Response {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct JoinResponse {
-    game_id: u64,
+    game_id: String,
     game_host: String,
     num_players: i64,
 }
 
 impl JoinResponse {
-    pub fn init(game_id: u64, game_host: String, num_players: i64) -> JoinResponse {
+    pub fn init(game_id: String, game_host: String, num_players: i64) -> JoinResponse {
         JoinResponse {
             game_id,
             game_host,
@@ -116,8 +116,8 @@ impl JoinResponse {
         self.num_players
     }
 
-    pub fn get_game_id(&self) -> u64 {
-        self.game_id
+    pub fn get_game_id(&self) -> String {
+        self.game_id.clone()
     }
 
     pub fn to_bytes(&self) -> bincode::Result<Vec<u8>> {

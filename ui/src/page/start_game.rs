@@ -24,7 +24,7 @@ enum RequestState {
     Ready,
     Waiting,
     Failed(String),
-    Finished(u64),
+    Finished(String),
 }
 
 #[derive(Clone)]
@@ -61,7 +61,7 @@ impl Model {
         self.request_state = RequestState::Waiting;
     }
 
-    pub fn ready_state(&mut self, game_id: u64) {
+    pub fn ready_state(&mut self, game_id: String) {
         self.request_state = RequestState::Finished(game_id);
     }
 }
@@ -123,6 +123,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
         Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
         Msg::NewGameResponse(response) => {
+            
             let game_id = response.get_game_id();
             log!(game_id);
             model.ready_state(game_id)
@@ -133,13 +134,11 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::JoinGameResponse(response) => {
             let game_id = response.get_game_id();
         }
-        
+
         Msg::JoinGameClicked => {
-            let mut net_game_id: u64 = 0;
-            match model.join_game_id.clone().parse::<u64>() {
-                Ok(n) => net_game_id = n,
-                Err(error) => log!(error),
-            }
+            let net_game_id: String = model.join_game_id.clone();
+            log!(net_game_id);
+            
             let game_request =
                 start_game::JoinRequest::init(model.player_name_field.clone(), net_game_id);
 
@@ -230,7 +229,7 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
         RequestState::Finished(value) => {
             let mut str_message = String::new();
             str_message.push_str("Game_id: ");
-            str_message.push_str(&value.to_string());
+            str_message.push_str(&value);
             vec![row::single(text(&str_message.to_string())).view()]
         }
     }
