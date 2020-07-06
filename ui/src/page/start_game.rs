@@ -100,17 +100,24 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                     orders.skip().perform_cmd({
                         async {
                             let msg = match send_message(url, bytes).await {
-                                Ok(bytes) => match start_game::Response::from_bytes(bytes) {
-                                    Ok(response) => Msg::NewGameResponse(response),
-                                    Err(error) => Msg::NewGameFailed(error.to_string()),
+                                Ok(bytes) => match hex::decode(bytes) {
+                                    Ok(bytes) => match start_game::Response::from_bytes(bytes) {
+                                        Ok(response) => {
+                                            // log(response.get_game_id());
+                                            Msg::NewGameResponse(response)
+                                        }
+                                        Err(error) => Msg::NewGameFailed(error.to_string()),
+                                    },
+                                    Err(error) => {
+                                        let fetch_error = "Hex Error".to_string();
+                                        Msg::NewGameFailed(fetch_error)
+                                    }
                                 },
                                 Err(error) => {
                                     let fetch_error = util::http::fetch_error_to_string(error);
                                     Msg::NewGameFailed(fetch_error)
                                 }
                             };
-
-                            msg
                         }
                     });
                 }
@@ -123,9 +130,9 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
         Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
         Msg::NewGameResponse(response) => {
-            
             let game_id = response.get_game_id();
-            log!(game_id);
+            log("NewGameResponse");
+            log(game_id.clone());
             model.ready_state(game_id)
             // TODO after we get the game_id we should navigate to the lobby page
         }
@@ -138,7 +145,6 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::JoinGameClicked => {
             let net_game_id: String = model.join_game_id.clone();
             log!(net_game_id);
-            
             let game_request =
                 start_game::JoinRequest::init(model.player_name_field.clone(), net_game_id);
 
@@ -229,7 +235,7 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
         RequestState::Finished(value) => {
             let mut str_message = String::new();
             str_message.push_str("Game_id: ");
-            str_message.push_str(&value);
+            str_message.push_str(value);
             vec![row::single(text(&str_message.to_string())).view()]
         }
     }
