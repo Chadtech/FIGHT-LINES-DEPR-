@@ -4,6 +4,7 @@ use crate::view::button::button;
 use crate::view::grid::row;
 use crate::view::text::text;
 use crate::view::text_field::text_field;
+use seed::log;
 use seed::prelude::{fetch, Method, Node, Orders, Request};
 use shared::api::start_game;
 
@@ -14,7 +15,6 @@ use shared::api::start_game;
 pub struct Model {
     game_name_field: String,
     player_name_field: String,
-    session: Session,
     request_state: RequestState,
 }
 
@@ -34,9 +34,6 @@ pub enum Msg {
 }
 
 impl Model {
-    pub fn get_session_mut(&mut self) -> &mut Session {
-        &mut self.session
-    }
     pub fn update_game_name(&mut self, new_name: String) {
         self.game_name_field = new_name;
     }
@@ -58,11 +55,10 @@ impl Model {
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init(session: Session) -> Model {
+pub fn init() -> Model {
     Model {
         game_name_field: String::new(),
         player_name_field: String::new(),
-        session,
         request_state: RequestState::Ready,
     }
 }
@@ -71,7 +67,7 @@ pub fn init(session: Session) -> Model {
 // UPDATE //
 ////////////////////////////////////////////////////////////////
 
-pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
+pub fn update(msg: Msg, model: &mut Model, session: &Session, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::StartClicked => {
             let game_request = start_game::Request::init(
@@ -79,10 +75,12 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 model.player_name_field.clone(),
             );
 
-            let url = model.get_session_mut().url("/game/create");
+            let url = session.url("/game/create");
 
             match game_request.to_bytes() {
                 Ok(bytes) => {
+                    log!("BYTES AS WE SEND THEM");
+                    log!(bytes);
                     model.waiting();
                     orders.skip().perform_cmd({
                         async {

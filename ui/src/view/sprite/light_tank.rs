@@ -43,7 +43,7 @@ impl Model {
         }
     }
 
-    pub fn to_img(&self, session: Session) -> Image {
+    pub fn to_img(&self, session: &Session) -> Image {
         let animation_step = session.get_frame() % (self.animation_length());
 
         let offset = self.sprite_sheet_offset(animation_step);

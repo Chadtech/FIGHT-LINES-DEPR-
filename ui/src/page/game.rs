@@ -14,7 +14,6 @@ use std::f64;
 ////////////////////////////////////////////////////////////////
 
 pub struct Model {
-    session: Session,
     canvas: ElRef<HtmlCanvasElement>,
     game_id: String,
     tank_position: Position,
@@ -30,14 +29,6 @@ pub enum Msg {
 }
 
 impl Model {
-    pub fn get_session(&self) -> Session {
-        self.session
-    }
-
-    pub fn get_session_mut(&mut self) -> &mut Session {
-        &mut self.session
-    }
-
     pub fn get_game_id(&self) -> String {
         self.game_id.clone()
     }
@@ -50,9 +41,8 @@ impl Model {
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init(session: Session, game_id: String) -> Model {
+pub fn init(game_id: String) -> Model {
     Model {
-        session,
         canvas: ElRef::default(),
         game_id,
         tank_position: Position { x: 0, y: 0 },
@@ -75,9 +65,7 @@ pub fn update(msg: Msg, model: &mut Model) {
 // VIEW //
 ////////////////////////////////////////////////////////////////
 
-pub fn view(model: &Model) -> Vec<Node<Msg>> {
-    let session = &model.session;
-
+pub fn view(model: &Model, session: &Session) -> Vec<Node<Msg>> {
     vec![
         canvas_view(&model.canvas),
         text(session.get_fps_str().as_str()),

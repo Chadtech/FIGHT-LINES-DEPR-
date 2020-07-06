@@ -40,7 +40,7 @@ pub fn init_dev() -> Session {
 ////////////////////////////////////////////////////////////////
 
 impl Session {
-    pub fn url(self, path: &str) -> String {
+    pub fn url(&self, path: &str) -> String {
         let mut buf: String = String::new();
 
         buf.push_str(self.api_url);
@@ -61,22 +61,22 @@ impl Session {
         self
     }
 
-    pub fn get_current_time(self) -> f64 {
+    pub fn get_current_time(&self) -> f64 {
         self.timestamp
     }
 
-    pub fn get_fps_str(self) -> String {
+    pub fn get_fps_str(&self) -> String {
         let mut buf = String::new();
 
         buf.push_str((1000.0 / self.timestamp_delta).round().to_string().as_str());
         buf.push_str("FPS");
         buf
     }
-    pub fn get_frame(self) -> i64 {
+    pub fn get_frame(&self) -> i64 {
         (self.get_current_time() / FPS_24) as i64
     }
 
-    pub fn asset_url(self, file_name: &'static str) -> String {
+    pub fn asset_url(&self, file_name: &'static str) -> String {
         let mut path = String::new();
         path.push_str("/assets/");
         path.push_str(file_name);

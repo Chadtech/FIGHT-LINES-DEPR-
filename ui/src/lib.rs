@@ -13,11 +13,16 @@ mod view;
 // TYPES //
 ////////////////////////////////////////////////////////////////
 
-enum Model {
-    PageNotFound(Session),
-    Title(Session),
+struct Model {
+    session: Session,
+    page: Page,
+}
+
+enum Page {
+    PageNotFound,
+    Title,
     StartGame(page::start_game::Model),
-    Demo(Session, page::demo::Form),
+    Demo(page::demo::Form),
     Lobby(page::lobby::Model),
     Game(page::game::Model),
 }
@@ -30,34 +35,14 @@ enum Msg {
     Lobby(page::lobby::Msg),
     Game(page::game::Msg),
 }
+
 ////////////////////////////////////////////////////////////////
 // PRIVATE HELPERS //
 ////////////////////////////////////////////////////////////////
 
 impl Model {
-    pub fn get_session_mut(&mut self) -> &mut Session {
-        match self {
-            Model::StartGame(sub_model) => sub_model.get_session_mut(),
-            Model::PageNotFound(session) => session,
-            Model::Title(session) => session,
-            Model::Demo(session, _) => session,
-            Model::Lobby(sub_model) => sub_model.get_session_mut(),
-            Model::Game(sub_model) => sub_model.get_session_mut(),
-        }
-    }
-    pub fn get_session<'a>(&'a self) -> &'a Session {
-        match self {
-            Model::StartGame(sub_model) => &sub_model.get_session(),
-            Model::PageNotFound(session) => session,
-            Model::Game(sub_model) => &sub_model.get_session(),
-
-            // _ => {
-            //     session::init_dev()
-            // }
-            Model::Title(session) => session,
-            Model::Demo(session, _) => session,
-            Model::Lobby(sub_model) => &sub_model.get_session(),
-        }
+    pub fn set_page(&mut self, page: Page) {
+        self.page = page;
     }
 }
 
@@ -78,8 +63,11 @@ fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     // if we should use `init_dev()`, because in some
     // cases, like during a real deployment, we dont want a
     // dev session
-    let model = Model::PageNotFound(session::init_dev());
-    AfterMount::new(model).url_handling(UrlHandling::PassToRoutes)
+    AfterMount::new(Model {
+        page: Page::PageNotFound,
+        session: session::init_dev(),
+    })
+    .url_handling(UrlHandling::PassToRoutes)
 }
 
 ////////////////////////////////////////////////////////////////
@@ -93,27 +81,32 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         }
         Msg::Rendered(render_info) => {
             model
-                .get_session_mut()
+                .session
                 .set_current_time(render_info.timestamp)
                 .set_render_delta(render_info.timestamp_delta);
         }
         Msg::StartGame(sub_msg) => {
-            if let Model::StartGame(sub_model) = model {
-                page::start_game::update(sub_msg, sub_model, &mut orders.proxy(Msg::StartGame))
+            if let Page::StartGame(sub_model) = &mut model.page {
+                page::start_game::update(
+                    sub_msg,
+                    sub_model,
+                    &model.session,
+                    &mut orders.proxy(Msg::StartGame),
+                )
             }
         }
         Msg::Demo(sub_msg) => {
-            if let Model::Demo(_, sub_model) = model {
+            if let Page::Demo(sub_model) = &mut model.page {
                 page::demo::update(sub_msg, sub_model)
             }
         }
         Msg::Lobby(sub_msg) => {
-            if let Model::Lobby(sub_model) = model {
+            if let Page::Lobby(sub_model) = &mut model.page {
                 page::lobby::update(sub_msg, sub_model)
             }
         }
         Msg::Game(sub_msg) => {
-            if let Model::Game(sub_model) = model {
+            if let Page::Game(sub_model) = &mut model.page {
                 page::game::update(sub_msg, sub_model)
             }
         }
@@ -123,37 +116,36 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 }
 
 fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
-    let session: &Session = model.get_session();
     match maybe_route {
-        None => *model = Model::PageNotFound(session),
+        None => model.set_page(Page::PageNotFound),
         Some(route) => match route {
-            Route::Title => match model {
-                Model::Title(_) => {}
-                _ => *model = Model::Title(session),
+            Route::Title => match model.page {
+                Page::Title => {}
+                _ => model.set_page(Page::Title),
             },
-            Route::StartGame => match model {
-                Model::StartGame(_) => {}
-                _ => *model = Model::StartGame(page::start_game::init(session)),
+            Route::StartGame => match model.page {
+                Page::StartGame(_) => {}
+                _ => model.set_page(Page::StartGame(page::start_game::init())),
             },
-            Route::Demo => match model {
-                Model::Demo(_, _) => {}
-                _ => *model = Model::Demo(session, page::demo::init()),
+            Route::Demo => match model.page {
+                Page::Demo(_) => {}
+                _ => model.set_page(Page::Demo(page::demo::init())),
             },
-            Route::Lobby(game_id) => match model {
-                Model::Lobby(sub_model) => {
+            Route::Lobby(game_id) => match &model.page {
+                Page::Lobby(sub_model) => {
                     if sub_model.get_game_id() != game_id {
-                        *model = Model::Lobby(page::lobby::init(session, game_id))
+                        model.set_page(Page::Lobby(page::lobby::init(game_id)));
                     }
                 }
-                _ => *model = Model::Lobby(page::lobby::init(session, game_id)),
+                _ => model.set_page(Page::Lobby(page::lobby::init(game_id))),
             },
-            Route::Game(game_id) => match model {
-                Model::Game(sub_model) => {
+            Route::Game(game_id) => match &model.page {
+                Page::Game(sub_model) => {
                     if sub_model.get_game_id() != game_id {
-                        *model = Model::Game(page::game::init(session, game_id))
+                        model.set_page(Page::Game(page::game::init(game_id)));
                     }
                 }
-                _ => *model = Model::Game(page::game::init(session, game_id)),
+                _ => model.set_page(Page::Game(page::game::init(game_id))),
             },
         },
     }
@@ -164,22 +156,22 @@ fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
 ////////////////////////////////////////////////////////////////
 
 fn view(model: &Model) -> Node<Msg> {
-    let body: Vec<Node<Msg>> = match model {
-        Model::Title(_) => page::title::view(),
-        Model::PageNotFound(_) => vec![div!["Page not found!"]],
-        Model::StartGame(sub_model) => page::start_game::view(sub_model)
+    let body: Vec<Node<Msg>> = match &model.page {
+        Page::Title => page::title::view(),
+        Page::PageNotFound => vec![div!["Page not found!"]],
+        Page::StartGame(sub_model) => page::start_game::view(&sub_model)
             .into_iter()
             .map(|node| node.map_msg(Msg::StartGame))
             .collect(),
-        Model::Demo(_, sub_model) => page::demo::view(sub_model)
+        Page::Demo(sub_model) => page::demo::view(&sub_model)
             .into_iter()
             .map(|node| node.map_msg(Msg::Demo))
             .collect(),
-        Model::Lobby(sub_model) => page::lobby::view(sub_model)
+        Page::Lobby(sub_model) => page::lobby::view(&sub_model)
             .into_iter()
             .map(|node| node.map_msg(Msg::Lobby))
             .collect(),
-        Model::Game(sub_model) => page::game::view(sub_model)
+        Page::Game(sub_model) => page::game::view(&sub_model, &model.session)
             .into_iter()
             .map(|node| node.map_msg(Msg::Game))
             .collect(),

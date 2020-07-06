@@ -1,4 +1,3 @@
-use crate::session::Session;
 use crate::view::button::button;
 use seed::prelude::Node;
 
@@ -7,7 +6,6 @@ use seed::prelude::Node;
 ////////////////////////////////////////////////////////////////
 
 pub struct Model {
-    session: Session,
     game_id: String,
 }
 
@@ -17,10 +15,6 @@ pub enum Msg {
 }
 
 impl Model {
-    pub fn get_session_mut(&mut self) -> &mut Session {
-        &mut self.session
-    }
-
     pub fn get_game_id(&self) -> String {
         self.game_id.clone()
     }
@@ -29,8 +23,8 @@ impl Model {
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init(session: Session, game_id: String) -> Model {
-    Model { session, game_id }
+pub fn init(game_id: String) -> Model {
+    Model { game_id }
 }
 
 ////////////////////////////////////////////////////////////////
