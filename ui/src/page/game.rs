@@ -5,7 +5,9 @@ use crate::view::grid::row::{row, Row};
 use crate::view::image;
 use crate::view::sprite::{grass_tile, light_tank};
 use crate::view::text::text;
-use seed::prelude::Node;
+use crate::web_sys::HtmlCanvasElement;
+use seed::{prelude::*, *};
+use std::f64;
 
 ////////////////////////////////////////////////////////////////
 // TYPES //
@@ -13,6 +15,7 @@ use seed::prelude::Node;
 
 pub struct Model {
     session: Session,
+    canvas: ElRef<HtmlCanvasElement>,
     game_id: String,
     tank_position: Position,
 }
@@ -50,6 +53,7 @@ impl Model {
 pub fn init(session: Session, game_id: String) -> Model {
     Model {
         session,
+        canvas: ElRef::default(),
         game_id,
         tank_position: Position { x: 0, y: 0 },
     }
@@ -72,36 +76,36 @@ pub fn update(msg: Msg, model: &mut Model) {
 ////////////////////////////////////////////////////////////////
 
 pub fn view(model: &Model) -> Vec<Node<Msg>> {
-    let session = model.get_session();
+    let session = &model.session;
 
-    let mut grass_tile_rows: Vec<Row<Msg>> = vec![];
-
-    for x in 0..SIZE {
-        let mut grass_tile_cells: Vec<Cell<Msg>> = vec![];
-
-        for y in 0..SIZE {
-            let tank_position = &model.tank_position;
-
-            let tank = if x == tank_position.x && y == tank_position.y {
-                light_tank::Model::init().to_img(session).view()
-            } else {
-                text("")
-            };
-
-            grass_tile_cells.push(
-                cell(vec![grass_tile::Model::init().to_img(session).view(), tank])
-                    .on_click(move |_| Msg::CellClicked(Position { x, y })),
-            )
-        }
-
-        grass_tile_rows.push(row(grass_tile_cells));
-    }
-    let timestamp_str = session.get_render_delta().to_string();
-
-    let timestamp_row = row::single(text(timestamp_str.as_str()));
-
-    grass_tile_rows.push(timestamp_row);
-    row::many(grass_tile_rows).view()
+    vec![
+        canvas_view(&model.canvas),
+        text(session.get_fps_str().as_str()),
+    ]
 }
 
-const SIZE: u8 = 20;
+fn canvas_view(canvas_ref: &ElRef<HtmlCanvasElement>) -> Node<Msg> {
+    match canvas_ref.get() {
+        None => {}
+        Some(canvas) => {
+            let ctx = canvas
+                .get_context("2d")
+                .unwrap()
+                .unwrap()
+                .dyn_into::<web_sys::CanvasRenderingContext2d>()
+                .unwrap();
+
+            ctx.begin_path();
+
+            // Draw the outer circle.
+            ctx.arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
+                .unwrap();
+
+            ctx.stroke();
+        }
+    }
+
+    canvas![el_ref(canvas_ref)]
+}
+
+const SIZE: u8 = 5;

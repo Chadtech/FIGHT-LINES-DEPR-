@@ -1995,6 +1995,7 @@ dependencies = [
  "serde_bytes",
  "shared",
  "wasm-bindgen-test",
+ "web-sys",
 ]
 
 [[package]]

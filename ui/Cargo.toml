@@ -23,6 +23,15 @@ futures = "^0.3.4"
 hex = "0.4.2"
 shared = { path = "../shared" }
 
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'CanvasRenderingContext2d',
+  'Document',
+  'Element',
+  'HtmlCanvasElement',
+  'Window',
+]
 
 [profile.release]
 lto = true

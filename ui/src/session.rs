@@ -1,8 +1,9 @@
+use seed::prelude::StreamHandle;
+
 ////////////////////////////////////////////////////////////////
 // TYPES //
 ////////////////////////////////////////////////////////////////
 
-#[derive(Copy, Clone)]
 pub struct Session {
     api_url: &'static str,
 
@@ -11,6 +12,7 @@ pub struct Session {
     /// beginning of browser session
     timestamp: f64,
     timestamp_delta: f64,
+    event_streams: Vec<StreamHandle>,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -29,6 +31,7 @@ pub fn init_dev() -> Session {
         api_url: DEV_API_URL,
         timestamp: 0.0,
         timestamp_delta: 0.0,
+        event_streams: Vec::new(),
     }
 }
 
@@ -62,10 +65,13 @@ impl Session {
         self.timestamp
     }
 
-    pub fn get_render_delta(self) -> f64 {
-        self.timestamp_delta
-    }
+    pub fn get_fps_str(self) -> String {
+        let mut buf = String::new();
 
+        buf.push_str((1000.0 / self.timestamp_delta).round().to_string().as_str());
+        buf.push_str("FPS");
+        buf
+    }
     pub fn get_frame(self) -> i64 {
         (self.get_current_time() / FPS_24) as i64
     }

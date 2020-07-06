@@ -45,6 +45,20 @@ impl Model {
             Model::Game(sub_model) => sub_model.get_session_mut(),
         }
     }
+    pub fn get_session<'a>(&'a self) -> &'a Session {
+        match self {
+            Model::StartGame(sub_model) => &sub_model.get_session(),
+            Model::PageNotFound(session) => session,
+            Model::Game(sub_model) => &sub_model.get_session(),
+
+            // _ => {
+            //     session::init_dev()
+            // }
+            Model::Title(session) => session,
+            Model::Demo(session, _) => session,
+            Model::Lobby(sub_model) => &sub_model.get_session(),
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -109,7 +123,7 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 }
 
 fn handle_route(maybe_route: Option<Route>, model: &mut Model) {
-    let session = *model.get_session_mut();
+    let session: &Session = model.get_session();
     match maybe_route {
         None => *model = Model::PageNotFound(session),
         Some(route) => match route {
