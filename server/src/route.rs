@@ -63,7 +63,7 @@ pub async fn join_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
         Ok(bytes) => match start_game::JoinRequest::from_bytes(bytes) {
             Ok(request) => {
                 let model = &mutex.lock().unwrap();
-                let game_id: u64 = request.game_id();
+                let game_id: String = request.game_id();
                 let plyr_name: String = request.player_name();
 
                 println!("Game_id: {}, player_name: {}", game_id, plyr_name);

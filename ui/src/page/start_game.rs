@@ -99,7 +99,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                     model.waiting();
                     orders.skip().perform_cmd({
                         async {
-                            let msg = match send_message(url, bytes).await {
+                            match send_message(url, bytes).await {
                                 Ok(bytes) => match hex::decode(bytes) {
                                     Ok(bytes) => match start_game::Response::from_bytes(bytes) {
                                         Ok(response) => {
