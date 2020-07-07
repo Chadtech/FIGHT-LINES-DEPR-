@@ -32,7 +32,7 @@ static FPS_24: f64 = 41.6667;
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init_dev(window_size: WindowSize) -> Session {
+pub fn init(window_size: WindowSize) -> Session {
     Session {
         api_url: DEV_API_URL,
         timestamp: 0.0,
@@ -108,11 +108,11 @@ impl Session {
 
 #[cfg(test)]
 mod session_tests {
-    use crate::session::{init_dev, FPS_24};
+    use crate::session::{init, FPS_24};
 
     #[test]
     fn within_first_frame() {
-        let mut session = init_dev();
+        let mut session = init();
 
         session.set_current_time(FPS_24 - 0.001);
 
@@ -120,7 +120,7 @@ mod session_tests {
     }
     #[test]
     fn after_first_frame() {
-        let mut session = init_dev();
+        let mut session = init();
 
         session.set_current_time(FPS_24 + 0.001);
 

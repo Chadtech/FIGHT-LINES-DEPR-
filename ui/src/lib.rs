@@ -72,16 +72,10 @@ fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Program> {
     }));
 
     let program = match get_window_size() {
-        Ok(window_size) => {
-            // TODO we need some kind of logic to determine
-            // if we should use `init_dev()`, because in some
-            // cases, like during a real deployment, we dont want a
-            // dev session
-            Program::Running(Model {
-                page: Page::PageNotFound,
-                session: session::init_dev(window_size),
-            })
-        }
+        Ok(window_size) => Program::Running(Model {
+            page: Page::PageNotFound,
+            session: session::init(window_size),
+        }),
         Err(error) => Program::Failed(error),
     };
 
