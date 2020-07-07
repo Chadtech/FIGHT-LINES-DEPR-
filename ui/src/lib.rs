@@ -1,7 +1,9 @@
 #![allow(clippy::wildcard_imports)]
 use crate::route::Route;
-use crate::session::Session;
+use crate::session::{Session, WindowSize};
+use crate::view::text::text;
 use seed::{prelude::*, *};
+use web_sys;
 
 mod page;
 mod route;
@@ -12,6 +14,11 @@ mod view;
 ////////////////////////////////////////////////////////////////
 // TYPES //
 ////////////////////////////////////////////////////////////////
+
+enum Program {
+    Running(Model),
+    Failed(String),
+}
 
 struct Model {
     session: Session,
@@ -34,6 +41,7 @@ enum Msg {
     Demo(page::demo::Msg),
     Lobby(page::lobby::Msg),
     Game(page::game::Msg),
+    WindowResized(Result<session::WindowSize, String>),
 }
 
 ////////////////////////////////////////////////////////////////
@@ -54,20 +62,60 @@ fn before_mount(_: Url) -> BeforeMount {
     BeforeMount::new().mount_type(MountType::Takeover)
 }
 
-fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
+fn after_mount(url: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Program> {
     orders.send_msg(Msg::RouteChanged(route::parse(url)));
 
     orders.after_next_render(Msg::Rendered);
 
-    // TODO we need some kind of logic to determine
-    // if we should use `init_dev()`, because in some
-    // cases, like during a real deployment, we dont want a
-    // dev session
-    AfterMount::new(Model {
-        page: Page::PageNotFound,
-        session: session::init_dev(),
+    orders.stream(streams::window_event(Ev::Resize, |_| {
+        Msg::WindowResized(get_window_size())
+    }));
+
+    let program = match get_window_size() {
+        Ok(window_size) => {
+            // TODO we need some kind of logic to determine
+            // if we should use `init_dev()`, because in some
+            // cases, like during a real deployment, we dont want a
+            // dev session
+            Program::Running(Model {
+                page: Page::PageNotFound,
+                session: session::init_dev(window_size),
+            })
+        }
+        Err(error) => Program::Failed(error),
+    };
+
+    AfterMount::new(program).url_handling(UrlHandling::PassToRoutes)
+}
+
+fn get_window_size() -> Result<session::WindowSize, String> {
+    fn get_window_size_js_error() -> Result<session::WindowSize, JsValue> {
+        match web_sys::window() {
+            None => Err(JsValue::from_str("Window could not be found")),
+            Some(window) => {
+                let inner_width_js = window.inner_width()?;
+                let inner_height_js = window.inner_height()?;
+
+                let maybe_inner_width = inner_width_js.as_f64();
+                let maybe_inner_height = inner_height_js.as_f64();
+
+                match (maybe_inner_width, maybe_inner_height) {
+                    (Some(inner_width), Some(inner_height)) => Ok(session::WindowSize {
+                        width: inner_width as u16,
+                        height: inner_height as u16,
+                    }),
+                    _ => Err(JsValue::from_str(
+                        "Got window, but failed to ascertain its size",
+                    )),
+                }
+            }
+        }
+    }
+    get_window_size_js_error().map_err(|js_error| {
+        js_error
+            .as_string()
+            .unwrap_or("Unknown error getting window size".to_string())
     })
-    .url_handling(UrlHandling::PassToRoutes)
 }
 
 ////////////////////////////////////////////////////////////////
@@ -109,6 +157,15 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             if let Page::Game(sub_model) = &mut model.page {
                 page::game::update(sub_msg, sub_model)
             }
+        }
+        Msg::WindowResized(resize_result) => {
+            match resize_result {
+                Ok(new_window_size) => {
+                    model.session.set_window_size(new_window_size);
+                }
+                Err(error) => {}
+            }
+            log!(model.session.get_window_size().width);
         }
     }
 
@@ -181,14 +238,27 @@ fn view(model: &Model) -> Node<Msg> {
 }
 
 ////////////////////////////////////////////////////////////////
-// VIEW //
+// PROGRAM //
 ////////////////////////////////////////////////////////////////
 
 #[wasm_bindgen(start)]
 pub fn start() {
-    App::builder(update, view)
+    App::builder(update_program, view_program)
         .before_mount(before_mount)
         .after_mount(after_mount)
         .routes(|url| Some(Msg::RouteChanged(route::parse(url))))
         .build_and_start();
+}
+
+fn update_program(msg: Msg, program: &mut Program, orders: &mut impl Orders<Msg>) {
+    if let Program::Running(model) = program {
+        update(msg, model, orders);
+    }
+}
+
+fn view_program(program: &Program) -> Node<Msg> {
+    match program {
+        Program::Running(model) => view(model),
+        Program::Failed(error) => text(error),
+    }
 }

@@ -13,6 +13,12 @@ pub struct Session {
     timestamp: f64,
     timestamp_delta: f64,
     event_streams: Vec<StreamHandle>,
+    window_size: WindowSize,
+}
+
+pub struct WindowSize {
+    pub width: u16,
+    pub height: u16,
 }
 
 ////////////////////////////////////////////////////////////////
@@ -26,12 +32,13 @@ static FPS_24: f64 = 41.6667;
 // INIT //
 ////////////////////////////////////////////////////////////////
 
-pub fn init_dev() -> Session {
+pub fn init_dev(window_size: WindowSize) -> Session {
     Session {
         api_url: DEV_API_URL,
         timestamp: 0.0,
         timestamp_delta: 0.0,
         event_streams: Vec::new(),
+        window_size,
     }
 }
 
@@ -47,6 +54,15 @@ impl Session {
         buf.push_str(path);
 
         buf
+    }
+
+    pub fn set_window_size(&mut self, window_size: WindowSize) -> &mut Session {
+        self.window_size = window_size;
+        self
+    }
+
+    pub fn get_window_size(&self) -> &WindowSize {
+        &self.window_size
     }
 
     pub fn set_current_time(&mut self, timestamp: f64) -> &mut Session {
