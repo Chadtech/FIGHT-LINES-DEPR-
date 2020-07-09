@@ -12,8 +12,12 @@ pub struct Session {
     /// beginning of browser session
     timestamp: f64,
     timestamp_delta: f64,
-    event_streams: Vec<StreamHandle>,
     window_size: WindowSize,
+    errors: Vec<Error>,
+}
+
+enum Error {
+    Error(String),
 }
 
 pub struct WindowSize {
@@ -37,8 +41,8 @@ pub fn init(window_size: WindowSize) -> Session {
         api_url: DEV_API_URL,
         timestamp: 0.0,
         timestamp_delta: 0.0,
-        event_streams: Vec::new(),
         window_size,
+        errors: Vec::new(),
     }
 }
 
@@ -47,6 +51,11 @@ pub fn init(window_size: WindowSize) -> Session {
 ////////////////////////////////////////////////////////////////
 
 impl Session {
+    pub fn record_error(&mut self, error: String) -> &mut Session {
+        self.errors.push(Error::Error(error));
+        self
+    }
+
     pub fn url(&self, path: &str) -> String {
         let mut buf: String = String::new();
 
@@ -108,11 +117,18 @@ impl Session {
 
 #[cfg(test)]
 mod session_tests {
-    use crate::session::{init, FPS_24};
+    use crate::session::{init, Session, WindowSize, FPS_24};
+
+    fn init_test() -> Session {
+        init(WindowSize {
+            width: 1440,
+            height: 800,
+        })
+    }
 
     #[test]
     fn within_first_frame() {
-        let mut session = init();
+        let mut session = init_test();
 
         session.set_current_time(FPS_24 - 0.001);
 
@@ -120,7 +136,7 @@ mod session_tests {
     }
     #[test]
     fn after_first_frame() {
-        let mut session = init();
+        let mut session = init_test();
 
         session.set_current_time(FPS_24 + 0.001);
 

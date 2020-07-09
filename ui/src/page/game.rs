@@ -1,3 +1,4 @@
+use crate::session;
 use crate::session::Session;
 use crate::view::grid::cell::{cell, Cell};
 use crate::view::grid::row;
@@ -67,12 +68,15 @@ pub fn update(msg: Msg, model: &mut Model) {
 
 pub fn view(model: &Model, session: &Session) -> Vec<Node<Msg>> {
     vec![
-        canvas_view(&model.canvas),
-        text(session.get_fps_str().as_str()),
+        canvas_view(&model.canvas, session.get_window_size()),
+        div![C!["canvas-overlay"], text(session.get_fps_str().as_str())],
     ]
 }
 
-fn canvas_view(canvas_ref: &ElRef<HtmlCanvasElement>) -> Node<Msg> {
+fn canvas_view(
+    canvas_ref: &ElRef<HtmlCanvasElement>,
+    window_size: &session::WindowSize,
+) -> Node<Msg> {
     match canvas_ref.get() {
         None => {}
         Some(canvas) => {
@@ -93,7 +97,13 @@ fn canvas_view(canvas_ref: &ElRef<HtmlCanvasElement>) -> Node<Msg> {
         }
     }
 
-    canvas![el_ref(canvas_ref)]
+    canvas![
+        el_ref(canvas_ref),
+        attrs! {
+            At::Width => window_size.width,
+            At::Height => window_size.height
+        }
+    ]
 }
 
 const SIZE: u8 = 5;

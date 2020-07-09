@@ -152,15 +152,14 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 page::game::update(sub_msg, sub_model)
             }
         }
-        Msg::WindowResized(resize_result) => {
-            match resize_result {
-                Ok(new_window_size) => {
-                    model.session.set_window_size(new_window_size);
-                }
-                Err(error) => {}
+        Msg::WindowResized(resize_result) => match resize_result {
+            Ok(new_window_size) => {
+                model.session.set_window_size(new_window_size);
             }
-            log!(model.session.get_window_size().width);
-        }
+            Err(error) => {
+                model.session.record_error(error);
+            }
+        },
     }
 
     orders.after_next_render(Msg::Rendered);
@@ -228,7 +227,7 @@ fn view(model: &Model) -> Node<Msg> {
             .collect(),
     };
 
-    div![nodes![body]]
+    div![C!["app-root"], nodes![body]]
 }
 
 ////////////////////////////////////////////////////////////////

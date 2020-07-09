@@ -36,6 +36,10 @@ fn main() -> std::io::Result<()> {
         .watch("../ui/src/view", RecursiveMode::Recursive)
         .unwrap();
 
+    watcher
+        .watch("../ui/src/page", RecursiveMode::Recursive)
+        .unwrap();
+
     loop {
         match receiver.recv() {
             Ok(event) => {
