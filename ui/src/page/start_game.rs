@@ -58,6 +58,7 @@ impl Model {
         self.request_state = RequestState::Failed(error_msg);
     }
     pub fn waiting(&mut self) {
+        log("Kanot");
         self.request_state = RequestState::Waiting;
     }
 
@@ -100,19 +101,16 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                     orders.skip().perform_cmd({
                         async {
                             match send_message(url, bytes).await {
-                                Ok(bytes) => match hex::decode(bytes) {
-                                    Ok(bytes) => match start_game::Response::from_bytes(bytes) {
+                                Ok(bytes) => {
+                                    let u8_array = start_game::Response::from_hex_data(bytes);
+                                    match start_game::Response::from_bytes(u8_array) {
                                         Ok(response) => {
                                             // log(response.get_game_id());
                                             Msg::NewGameResponse(response)
                                         }
                                         Err(error) => Msg::NewGameFailed(error.to_string()),
-                                    },
-                                    Err(error) => {
-                                        let fetch_error = "Hex Error".to_string();
-                                        Msg::NewGameFailed(fetch_error)
                                     }
-                                },
+                                }
                                 Err(error) => {
                                     let fetch_error = util::http::fetch_error_to_string(error);
                                     Msg::NewGameFailed(fetch_error)
@@ -129,6 +127,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::GameNameFieldUpdated(new_field) => model.update_game_name(new_field),
         Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
         Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
+        
         Msg::NewGameResponse(response) => {
             let game_id = response.get_game_id();
             log("NewGameResponse");
@@ -141,7 +140,6 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::JoinGameResponse(response) => {
             let game_id = response.get_game_id();
         }
-
         Msg::JoinGameClicked => {
             let net_game_id: String = model.join_game_id.clone();
             log!(net_game_id);
@@ -149,42 +147,42 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 start_game::JoinRequest::init(model.player_name_field.clone(), net_game_id);
 
             let url = model.get_session_mut().url("/game/join");
-            match game_request.to_bytes() {
-                Ok(bytes) => {
-                    model.waiting();
-                    orders.skip().perform_cmd({
-                        async {
-                            let msg = match send_message(url, bytes).await {
-                                Ok(bytes) => match start_game::Response::from_bytes(bytes) {
-                                    Ok(response) => Msg::NewGameResponse(response),
-                                    Err(error) => Msg::NewGameFailed(error.to_string()),
-                                },
-                                Err(error) => {
-                                    let fetch_error = util::http::fetch_error_to_string(error);
-                                    Msg::NewGameFailed(fetch_error)
-                                }
-                            };
+            //   match game_request.to_bytes() {
+            //       Ok(bytes) => {
+            //           model.waiting();
+            //           orders.skip().perform_cmd({
+            //               async {
+            //                   let msg = match send_message(url, bytes).await {
+            //                       Ok(bytes) => match start_game::Response::from_bytes(bytes) {
+            //                           Ok(response) => Msg::NewGameResponse(response),
+            //                           Err(error) => Msg::NewGameFailed(error.to_string()),
+            //                       },
+            //                       Err(error) => {
+            //                           let fetch_error = util::http::fetch_error_to_string(error);
+            //                           Msg::NewGameFailed(fetch_error)
+            //                       }
+            //                   };
 
-                            msg
-                        }
-                    });
-                }
-                Err(error) => {
-                    model.record_error(error.to_string());
-                }
-            }
+            //                   msg
+            //               }
+            //           });
+            //       }
+            //       Err(error) => {
+            //           model.record_error(error.to_string());
+            //       }
+            //   }
         }
     }
 }
 
-async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<Vec<u8>> {
+async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<String> {
     Request::new(url.as_str())
         .method(Method::Post)
         .text(hex::encode(bytes))
         .fetch()
         .await?
         .check_status()?
-        .bytes()
+        .text()
         .await
 }
 

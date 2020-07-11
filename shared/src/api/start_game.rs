@@ -30,6 +30,7 @@ impl GameRequest {
     pub fn from_bytes(byte_data: Vec<u8>) -> bincode::Result<GameRequest> {
         bincode::deserialize(&byte_data[..])
     }
+    
 }
 
 ////////////////////////////////////////////////////////////////
@@ -87,6 +88,12 @@ impl Response {
 
     pub fn from_bytes(byte_data: Vec<u8>) -> bincode::Result<Response> {
         bincode::deserialize(&byte_data[..])
+    }
+    pub fn from_hex_data(byte_data: String) -> Vec<u8> {
+        match hex::decode(byte_data) {
+            Ok(data) => data,
+            Err(error) => Vec::new(),
+        }
     }
 }
 
