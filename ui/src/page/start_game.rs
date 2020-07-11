@@ -105,7 +105,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                                     let u8_array = start_game::Response::from_hex_data(bytes);
                                     match start_game::Response::from_bytes(u8_array) {
                                         Ok(response) => {
-                                            // log(response.get_game_id());
+                                            log(response.get_game_id());
                                             Msg::NewGameResponse(response)
                                         }
                                         Err(error) => Msg::NewGameFailed(error.to_string()),
@@ -115,7 +115,7 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                                     let fetch_error = util::http::fetch_error_to_string(error);
                                     Msg::NewGameFailed(fetch_error)
                                 }
-                            };
+                            }
                         }
                     });
                 }
@@ -127,11 +127,9 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::GameNameFieldUpdated(new_field) => model.update_game_name(new_field),
         Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
         Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
-        
         Msg::NewGameResponse(response) => {
             let game_id = response.get_game_id();
             log("NewGameResponse");
-            log(game_id.clone());
             model.ready_state(game_id)
             // TODO after we get the game_id we should navigate to the lobby page
         }
