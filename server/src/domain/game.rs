@@ -1,5 +1,6 @@
 use super::player;
 use super::player::Player;
+use std::convert::TryInto;
 ////////////////////////////////////////////////////////////////
 // Types //
 ////////////////////////////////////////////////////////////////
@@ -43,6 +44,11 @@ impl Game {
     pub fn num_players(&self) -> usize {
         match self {
             Game::Lobby(lobby) => lobby.opponents.len() + 1,
+        }
+    }
+    pub fn game_host(&self) -> String {
+        match self {
+            Game::Lobby(lobby) => lobby.host.get_name(),
         }
     }
 

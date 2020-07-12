@@ -30,7 +30,18 @@ impl GameRequest {
     pub fn from_bytes(byte_data: Vec<u8>) -> bincode::Result<GameRequest> {
         bincode::deserialize(&byte_data[..])
     }
-    
+}
+
+/////////////////////////////////////////////////////////////////////
+/// Helper Function,
+/// This function takes in the string messages from the server
+/// and converts them to their valid struct types.
+
+pub fn from_hex_data(byte_data: String) -> Vec<u8> {
+    match hex::decode(byte_data) {
+        Ok(data) => data,
+        Err(_error) => Vec::new(),
+    }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -89,27 +100,20 @@ impl Response {
     pub fn from_bytes(byte_data: Vec<u8>) -> bincode::Result<Response> {
         bincode::deserialize(&byte_data[..])
     }
-    pub fn from_hex_data(byte_data: String) -> Vec<u8> {
-        match hex::decode(byte_data) {
-            Ok(data) => data,
-            Err(error) => Vec::new(),
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////////
 // JoinResponse //
 ////////////////////////////////////////////////////////////////
-
 #[derive(Serialize, Deserialize, Clone)]
 pub struct JoinResponse {
     game_id: String,
     game_host: String,
-    num_players: i64,
+    num_players: usize,
 }
 
 impl JoinResponse {
-    pub fn init(game_id: String, game_host: String, num_players: i64) -> JoinResponse {
+    pub fn init(game_id: String, game_host: String, num_players: usize) -> JoinResponse {
         JoinResponse {
             game_id,
             game_host,
@@ -119,7 +123,7 @@ impl JoinResponse {
     pub fn get_game_host(&self) -> String {
         self.game_host.clone()
     }
-    pub fn get_num_players(&self) -> i64 {
+    pub fn get_num_players(&self) -> usize {
         self.num_players
     }
 

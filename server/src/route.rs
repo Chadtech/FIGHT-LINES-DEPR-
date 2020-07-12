@@ -37,7 +37,6 @@ pub async fn post_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
 
                 let new_game = game::init_lobby(request.game_name(), request.host_name());
                 let game_id: String = model.add_game(new_game);
-                
                 // To be Deleted
                 println!(
                     "\n\n New Game created, id:{}, name:{}, host:{} \n\n",
@@ -62,16 +61,22 @@ pub async fn join_game(body: String, mutex: web::Data<Mutex<Model>>) -> impl Res
     match hex::decode(body) {
         Ok(bytes) => match start_game::JoinRequest::from_bytes(bytes) {
             Ok(request) => {
-                let model = &mutex.lock().unwrap();
+                let mut model = mutex.lock().unwrap();
                 let game_id: String = request.game_id();
                 let plyr_name: String = request.player_name();
 
-                println!("Game_id: {}, player_name: {}", game_id, plyr_name);
-
-                match model.get_game(game_id) {
+                match model.get_game(game_id.clone()) {
                     Some(game) => {
-                        println!("Game Found");
-                        game.game_name().to_string()
+                        game.add_player(plyr_name);
+                        let response = start_game::JoinResponse::init(
+                            game_id.clone(),
+                            game.game_host(),
+                            game.num_players(),
+                        );
+                        match response.to_bytes() {
+                            Ok(response_bytes) => hex::encode(response_bytes),
+                            Err(error) => error.to_string(),
+                        }
                     }
                     None => {
                         println!("No Game Found");

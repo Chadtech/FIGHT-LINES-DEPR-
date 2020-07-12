@@ -39,15 +39,14 @@ impl Model {
         let uuid_id = Uuid::new_v4();
 
         let id: String = uuid_id.to_simple().to_string();
-        
         // Did this to pass the "value borrowed here after move"
         let refrence = id.clone();
 
         self.games.insert(id, new_game);
         refrence
     }
-    pub fn get_game(&self, game_id: String) -> Option<&Game> {
-        self.games.get(&game_id)
+    pub fn get_game(&mut self, game_id: String) -> Option<&mut Game> {
+        self.games.get_mut(&game_id)
     }
 
     fn set_seed(&mut self, randomness_seed: usize) {

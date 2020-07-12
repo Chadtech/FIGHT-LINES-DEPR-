@@ -25,6 +25,7 @@ enum RequestState {
     Waiting,
     Failed(String),
     Finished(String),
+    Joined(start_game::JoinResponse),
 }
 
 #[derive(Clone)]
@@ -58,12 +59,14 @@ impl Model {
         self.request_state = RequestState::Failed(error_msg);
     }
     pub fn waiting(&mut self) {
-        log("Kanot");
         self.request_state = RequestState::Waiting;
     }
 
     pub fn ready_state(&mut self, game_id: String) {
         self.request_state = RequestState::Finished(game_id);
+    }
+    pub fn join_state(&mut self, join_state: start_game::JoinResponse) {
+        self.request_state = RequestState::Joined(join_state)
     }
 }
 
@@ -101,9 +104,9 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                     orders.skip().perform_cmd({
                         async {
                             match send_message(url, bytes).await {
-                                Ok(bytes) => {
-                                    let u8_array = start_game::Response::from_hex_data(bytes);
-                                    match start_game::Response::from_bytes(u8_array) {
+                                Ok(string_response) => {
+                                    let bytes_data = start_game::from_hex_data(string_response);
+                                    match start_game::Response::from_bytes(bytes_data) {
                                         Ok(response) => {
                                             log(response.get_game_id());
                                             Msg::NewGameResponse(response)
@@ -127,16 +130,19 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::GameNameFieldUpdated(new_field) => model.update_game_name(new_field),
         Msg::PlayerNameFieldUpdated(new_field) => model.update_player_name(new_field),
         Msg::GameIdFieldUpdated(new_field) => model.update_game_id(new_field),
+
+        // This function is triggered when we have a valid GameResponse, it currently
+        // populates the UI with the GameID so other users can join.
         Msg::NewGameResponse(response) => {
             let game_id = response.get_game_id();
-            log("NewGameResponse");
             model.ready_state(game_id)
             // TODO after we get the game_id we should navigate to the lobby page
         }
 
         Msg::NewGameFailed(error) => model.record_error(error),
+
         Msg::JoinGameResponse(response) => {
-            let game_id = response.get_game_id();
+            model.join_state(response)
         }
         Msg::JoinGameClicked => {
             let net_game_id: String = model.join_game_id.clone();
@@ -145,34 +151,39 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 start_game::JoinRequest::init(model.player_name_field.clone(), net_game_id);
 
             let url = model.get_session_mut().url("/game/join");
-            //   match game_request.to_bytes() {
-            //       Ok(bytes) => {
-            //           model.waiting();
-            //           orders.skip().perform_cmd({
-            //               async {
-            //                   let msg = match send_message(url, bytes).await {
-            //                       Ok(bytes) => match start_game::Response::from_bytes(bytes) {
-            //                           Ok(response) => Msg::NewGameResponse(response),
-            //                           Err(error) => Msg::NewGameFailed(error.to_string()),
-            //                       },
-            //                       Err(error) => {
-            //                           let fetch_error = util::http::fetch_error_to_string(error);
-            //                           Msg::NewGameFailed(fetch_error)
-            //                       }
-            //                   };
-
-            //                   msg
-            //               }
-            //           });
-            //       }
-            //       Err(error) => {
-            //           model.record_error(error.to_string());
-            //       }
-            //   }
+            match game_request.to_bytes() {
+                Ok(bytes) => {
+                    model.waiting();
+                    orders.skip().perform_cmd({
+                        async {
+                            match send_message(url, bytes).await {
+                                Ok(string_response) => {
+                                    let bytes_data = start_game::from_hex_data(string_response);
+                                    match start_game::JoinResponse::from_bytes(bytes_data) {
+                                        Ok(response) => Msg::JoinGameResponse(response),
+                                        Err(error) => Msg::NewGameFailed(error.to_string()),
+                                    }
+                                }
+                                Err(error) => {
+                                    let fetch_error = util::http::fetch_error_to_string(error);
+                                    Msg::NewGameFailed(fetch_error)
+                                }
+                            }
+                        }
+                    });
+                }
+                Err(error) => {
+                    model.record_error(error.to_string());
+                }
+            }
         }
     }
 }
 
+// Communication Function, Our Client  <-> Server Communication uses a custom
+// data structure, we cant send bytes directly so we need to serialize it to
+// hex string and send it back, Hence all messages between the client & server
+// are Hex Strings which refer to our internal structs.
 async fn send_message(url: String, bytes: Vec<u8>) -> fetch::Result<String> {
     Request::new(url.as_str())
         .method(Method::Post)
@@ -232,6 +243,18 @@ pub fn view(model: &Model) -> Vec<Node<Msg>> {
             let mut str_message = String::new();
             str_message.push_str("Game_id: ");
             str_message.push_str(value);
+            vec![row::single(text(&str_message.to_string())).view()]
+        }
+        RequestState::Joined(state_value) => {
+            let mut str_message = String::new();
+            str_message.push_str("Game_id: ");
+            str_message.push_str(&state_value.get_game_id());
+
+            str_message.push_str("\nGame Host: ");
+            str_message.push_str(&state_value.get_game_host());
+            str_message.push_str("\nNumber of Players: ");
+            str_message.push_str(&state_value.get_num_players().to_string());
+
             vec![row::single(text(&str_message.to_string())).view()]
         }
     }
